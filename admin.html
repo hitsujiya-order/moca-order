@@ -4,6 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>MOCA 管理画面</title>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <style>
     * {
       box-sizing: border-box;
@@ -96,17 +97,6 @@
 
     .container {
       padding: 12px;
-    }
-
-    .order-group {
-      margin-bottom: 14px;
-    }
-
-    .group-title {
-      font-size: 14px;
-      font-weight: bold;
-      color: #555;
-      margin: 0 0 8px;
     }
 
     .order-card {
@@ -202,12 +192,6 @@
       color: #111;
     }
 
-    .btn-history {
-      background: #fff;
-      color: #111;
-      border: 1px solid #ccc !important;
-    }
-
     .empty {
       background: #fff;
       border: 1px dashed #ccc;
@@ -220,6 +204,15 @@
     .history-section {
       margin-top: 20px;
       padding-top: 8px;
+    }
+
+    .loading {
+      background: #fff;
+      border: 1px dashed #ccc;
+      color: #666;
+      border-radius: 14px;
+      padding: 18px;
+      text-align: center;
     }
   </style>
 </head>
@@ -258,54 +251,22 @@
   </div>
 
   <div class="container">
-    <div id="ordersArea"></div>
+    <div id="ordersArea" class="loading">読み込み中...</div>
 
     <div class="history-section">
       <h2 style="font-size:18px; margin: 0 0 10px;">注文履歴</h2>
-      <div id="historyArea"></div>
+      <div id="historyArea" class="loading">読み込み中...</div>
     </div>
   </div>
 
   <script>
+    const SUPABASE_URL = "https://ztmuvqipzlnmtsbbtuyh.supabase.co";
+    const SUPABASE_ANON_KEY = "sb_publishable_WI0CrS5TGxfQjmjTFtUHmA_Xa5Ey4j5";
+
+    const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
     let currentFilter = "all";
-
-    let orders = JSON.parse(localStorage.getItem("mocaAdminOrders")) || [];
-    let history = JSON.parse(localStorage.getItem("mocaAdminHistory")) || [];
-
-    function migrateFromCustomerHistory() {
-      const customerHistory = JSON.parse(localStorage.getItem("mocaHistory")) || [];
-
-      if (orders.length === 0 && history.length === 0 && customerHistory.length > 0) {
-        customerHistory.forEach(orderGroup => {
-          orderGroup.items.forEach(item => {
-            orders.push({
-              id: Date.now().toString() + Math.random().toString(16).slice(2),
-              orderedAt: orderGroup.orderedAt,
-              orderTable: orderGroup.orderTable || item.fromTable || "-",
-              name: item.name,
-              mix: item.mix || "",
-              quantity: item.quantity || 1,
-              subtotal: item.subtotal || 0,
-              targetTable: item.targetTable || item.fromTable || "-",
-              fromTable: item.fromTable || orderGroup.orderTable || "-",
-              orderType: item.orderType || "normal",
-              supportMessage: item.supportMessage || "",
-              done: false
-            });
-          });
-        });
-
-        saveOrders();
-      }
-    }
-
-    function saveOrders() {
-      localStorage.setItem("mocaAdminOrders", JSON.stringify(orders));
-    }
-
-    function saveHistory() {
-      localStorage.setItem("mocaAdminHistory", JSON.stringify(history));
-    }
+    let allOrders = [];
 
     function typeLabel(type) {
       if (type === "gift") return "奢り注文";
@@ -327,17 +288,17 @@
     }
 
     function getFilteredOrders() {
-      if (currentFilter === "all") return orders;
-      if (currentFilter === "pending") return orders.filter(order => !order.done);
-      if (currentFilter === "done") return orders.filter(order => order.done);
-      return orders.filter(order => order.orderType === currentFilter);
+      if (currentFilter === "all") return allOrders.filter(order => order.status !== "done");
+      if (currentFilter === "pending") return allOrders.filter(order => order.status === "pending");
+      if (currentFilter === "done") return allOrders.filter(order => order.status === "done");
+      return allOrders.filter(order => order.order_type === currentFilter && order.status !== "done");
     }
 
     function renderSummary() {
-      document.getElementById("pendingCount").textContent = orders.filter(o => !o.done).length;
-      document.getElementById("doneCount").textContent = orders.filter(o => o.done).length;
-      document.getElementById("giftCount").textContent = orders.filter(o => o.orderType === "gift").length;
-      document.getElementById("supportCount").textContent = orders.filter(o => o.orderType === "staff_support").length;
+      document.getElementById("pendingCount").textContent = allOrders.filter(o => o.status !== "done").length;
+      document.getElementById("doneCount").textContent = allOrders.filter(o => o.status === "done").length;
+      document.getElementById("giftCount").textContent = allOrders.filter(o => o.order_type === "gift").length;
+      document.getElementById("supportCount").textContent = allOrders.filter(o => o.order_type === "staff_support").length;
     }
 
     function renderOrders() {
@@ -356,34 +317,34 @@
           <div class="order-card">
             <div class="order-head">
               <div>
-                <h3>${order.name}</h3>
+                <h3>${escapeHtml(order.item_name)}</h3>
                 <div class="meta">
-                  注文時刻: ${order.orderedAt}<br>
-                  注文元: Table ${order.fromTable}
+                  注文時刻: ${formatDate(order.created_at)}<br>
+                  注文元: Table ${escapeHtml(order.from_table || "-")}
                 </div>
               </div>
               <div style="text-align:right;">
-                <div style="font-size:18px; font-weight:bold;">¥${Number(order.subtotal).toLocaleString()}</div>
+                <div style="font-size:18px; font-weight:bold;">¥${Number(order.subtotal || 0).toLocaleString()}</div>
               </div>
             </div>
 
             <div class="badge-row">
-              <span class="badge ${typeBadgeClass(order.orderType)}">${typeLabel(order.orderType)}</span>
-              <span class="badge ${order.done ? 'badge-done' : 'badge-pending'}">${order.done ? '提供済み' : '未提供'}</span>
+              <span class="badge ${typeBadgeClass(order.order_type)}">${typeLabel(order.order_type)}</span>
+              <span class="badge ${order.status === "done" ? "badge-done" : "badge-pending"}">${order.status === "done" ? "提供済み" : "未提供"}</span>
             </div>
 
             <div class="detail-box">
               <div class="detail-line">数量: ${order.quantity}</div>
-              ${order.mix ? `<div class="detail-line">割り方: ${order.mix}</div>` : ""}
-              ${order.orderType === "normal" ? `<div class="detail-line">届け先: Table ${order.targetTable}</div>` : ""}
-              ${order.orderType === "gift" ? `<div class="detail-line">届け先: Table ${order.targetTable}（Table ${order.fromTable} からの奢り）</div>` : ""}
-              ${order.orderType === "staff_support" ? `<div class="detail-line">区分: スタッフ応援</div>` : ""}
-              ${order.orderType === "staff_support" && order.supportMessage ? `<div class="detail-line">メッセージ: ${escapeHtml(order.supportMessage)}</div>` : ""}
+              ${order.mix ? `<div class="detail-line">割り方: ${escapeHtml(order.mix)}</div>` : ""}
+              ${order.order_type === "normal" ? `<div class="detail-line">届け先: Table ${escapeHtml(order.target_table || "-")}</div>` : ""}
+              ${order.order_type === "gift" ? `<div class="detail-line">届け先: Table ${escapeHtml(order.target_table || "-")}（Table ${escapeHtml(order.from_table || "-")} からの奢り）</div>` : ""}
+              ${order.order_type === "staff_support" ? `<div class="detail-line">区分: スタッフ応援</div>` : ""}
+              ${order.order_type === "staff_support" && order.support_message ? `<div class="detail-line">メッセージ: ${escapeHtml(order.support_message)}</div>` : ""}
             </div>
 
             <div class="actions">
-              <button class="btn-done" onclick="toggleDone('${order.id}')">
-                ${order.done ? "未提供に戻す" : "提供済みにする"}
+              <button class="btn-done" onclick="toggleDone('${order.id}', '${order.status}')">
+                ${order.status === "done" ? "未提供に戻す" : "提供済みにする"}
               </button>
               <button class="btn-delete" onclick="deleteOrder('${order.id}')">削除</button>
             </div>
@@ -396,41 +357,42 @@
 
     function renderHistory() {
       const historyArea = document.getElementById("historyArea");
+      const doneOrders = allOrders.filter(order => order.status === "done");
 
-      if (history.length === 0) {
+      if (doneOrders.length === 0) {
         historyArea.innerHTML = `<div class="empty">履歴はまだありません</div>`;
         return;
       }
 
       let html = "";
-      history.forEach(order => {
+      doneOrders.forEach(order => {
         html += `
           <div class="order-card">
             <div class="order-head">
               <div>
-                <h3>${order.name}</h3>
+                <h3>${escapeHtml(order.item_name)}</h3>
                 <div class="meta">
-                  注文時刻: ${order.orderedAt}<br>
-                  注文元: Table ${order.fromTable}
+                  注文時刻: ${formatDate(order.created_at)}<br>
+                  注文元: Table ${escapeHtml(order.from_table || "-")}
                 </div>
               </div>
               <div style="text-align:right;">
-                <div style="font-size:18px; font-weight:bold;">¥${Number(order.subtotal).toLocaleString()}</div>
+                <div style="font-size:18px; font-weight:bold;">¥${Number(order.subtotal || 0).toLocaleString()}</div>
               </div>
             </div>
 
             <div class="badge-row">
-              <span class="badge ${typeBadgeClass(order.orderType)}">${typeLabel(order.orderType)}</span>
+              <span class="badge ${typeBadgeClass(order.order_type)}">${typeLabel(order.order_type)}</span>
               <span class="badge badge-done">提供済み履歴</span>
             </div>
 
             <div class="detail-box">
               <div class="detail-line">数量: ${order.quantity}</div>
-              ${order.mix ? `<div class="detail-line">割り方: ${order.mix}</div>` : ""}
-              ${order.orderType === "normal" ? `<div class="detail-line">届け先: Table ${order.targetTable}</div>` : ""}
-              ${order.orderType === "gift" ? `<div class="detail-line">届け先: Table ${order.targetTable}（Table ${order.fromTable} からの奢り）</div>` : ""}
-              ${order.orderType === "staff_support" ? `<div class="detail-line">区分: スタッフ応援</div>` : ""}
-              ${order.orderType === "staff_support" && order.supportMessage ? `<div class="detail-line">メッセージ: ${escapeHtml(order.supportMessage)}</div>` : ""}
+              ${order.mix ? `<div class="detail-line">割り方: ${escapeHtml(order.mix)}</div>` : ""}
+              ${order.order_type === "normal" ? `<div class="detail-line">届け先: Table ${escapeHtml(order.target_table || "-")}</div>` : ""}
+              ${order.order_type === "gift" ? `<div class="detail-line">届け先: Table ${escapeHtml(order.target_table || "-")}（Table ${escapeHtml(order.from_table || "-")} からの奢り）</div>` : ""}
+              ${order.order_type === "staff_support" ? `<div class="detail-line">区分: スタッフ応援</div>` : ""}
+              ${order.order_type === "staff_support" && order.support_message ? `<div class="detail-line">メッセージ: ${escapeHtml(order.support_message)}</div>` : ""}
             </div>
           </div>
         `;
@@ -439,38 +401,56 @@
       historyArea.innerHTML = html;
     }
 
-    function toggleDone(id) {
-      const target = orders.find(order => order.id === id);
-      if (!target) return;
+    async function fetchOrders() {
+      const { data, error } = await supabaseClient
+        .from("orders")
+        .select("*")
+        .order("created_at", { ascending: false });
 
-      target.done = !target.done;
-
-      if (target.done) {
-        history.unshift({ ...target });
-      } else {
-        history = history.filter(h => h.id !== id);
+      if (error) {
+        console.error(error);
+        document.getElementById("ordersArea").innerHTML = `<div class="empty">注文の取得に失敗しました</div>`;
+        document.getElementById("historyArea").innerHTML = `<div class="empty">履歴の取得に失敗しました</div>`;
+        return;
       }
 
-      saveOrders();
-      saveHistory();
+      allOrders = data || [];
       render();
     }
 
-    function deleteOrder(id) {
-      orders = orders.filter(order => order.id !== id);
-      history = history.filter(order => order.id !== id);
-      saveOrders();
-      saveHistory();
-      render();
+    async function toggleDone(id, currentStatus) {
+      const newStatus = currentStatus === "done" ? "pending" : "done";
+
+      const { error } = await supabaseClient
+        .from("orders")
+        .update({ status: newStatus })
+        .eq("id", id);
+
+      if (error) {
+        console.error(error);
+        alert("状態更新に失敗しました");
+        return;
+      }
+
+      await fetchOrders();
     }
 
-    function escapeHtml(text) {
-      return String(text)
-        .replaceAll("&", "&amp;")
-        .replaceAll("<", "&lt;")
-        .replaceAll(">", "&gt;")
-        .replaceAll('"', "&quot;")
-        .replaceAll("'", "&#039;");
+    async function deleteOrder(id) {
+      const ok = confirm("この注文を削除しますか？");
+      if (!ok) return;
+
+      const { error } = await supabaseClient
+        .from("orders")
+        .delete()
+        .eq("id", id);
+
+      if (error) {
+        console.error(error);
+        alert("削除に失敗しました");
+        return;
+      }
+
+      await fetchOrders();
     }
 
     function render() {
@@ -479,8 +459,24 @@
       renderHistory();
     }
 
-    migrateFromCustomerHistory();
-    render();
+    function formatDate(value) {
+      try {
+        return new Date(value).toLocaleString("ja-JP");
+      } catch {
+        return value;
+      }
+    }
+
+    function escapeHtml(text) {
+      return String(text ?? "")
+        .replaceAll("&", "&amp;")
+        .replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;")
+        .replaceAll('"', "&quot;")
+        .replaceAll("'", "&#039;");
+    }
+
+    fetchOrders();
   </script>
 </body>
 </html>
