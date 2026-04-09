@@ -23,27 +23,29 @@
       z-index: 100;
       background: #111;
       color: #fff;
-      padding: 16px 14px;
+      padding: 10px 14px 8px;
       border-bottom: 1px solid #222;
     }
 
     header h1 {
       margin: 0;
-      font-size: 24px;
+      font-size: 20px;
+      line-height: 1.2;
     }
 
     header p {
-      margin: 6px 0 0;
-      font-size: 13px;
+      margin: 4px 0 0;
+      font-size: 12px;
       color: #ccc;
+      line-height: 1.4;
     }
 
     .top-bar {
       position: sticky;
-      top: 69px;
+      top: 54px;
       z-index: 99;
       background: #fff;
-      padding: 12px;
+      padding: 10px 12px;
       border-bottom: 1px solid #ddd;
       display: flex;
       gap: 8px;
@@ -71,8 +73,8 @@
     .summary {
       display: grid;
       grid-template-columns: repeat(2, 1fr);
-      gap: 10px;
-      padding: 12px;
+      gap: 8px;
+      padding: 10px 12px;
       background: #fff;
       border-bottom: 1px solid #e5e5e5;
     }
@@ -80,23 +82,29 @@
     .summary-card {
       background: #fafafa;
       border: 1px solid #e5e5e5;
-      border-radius: 14px;
-      padding: 12px;
+      border-radius: 12px;
+      padding: 10px;
     }
 
     .summary-card .label {
-      font-size: 12px;
+      font-size: 11px;
       color: #666;
-      margin-bottom: 6px;
+      margin-bottom: 4px;
     }
 
     .summary-card .value {
-      font-size: 20px;
+      font-size: 18px;
       font-weight: bold;
     }
 
     .container {
       padding: 12px;
+    }
+
+    .section-title {
+      font-size: 18px;
+      font-weight: bold;
+      margin: 0 0 10px;
     }
 
     .order-card {
@@ -106,6 +114,14 @@
       padding: 14px;
       margin-bottom: 10px;
       box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+    }
+
+    .table-big {
+      font-size: 28px;
+      font-weight: 800;
+      line-height: 1.1;
+      margin-bottom: 8px;
+      letter-spacing: 0.4px;
     }
 
     .order-head {
@@ -126,6 +142,7 @@
       font-size: 13px;
       color: #666;
       line-height: 1.6;
+      margin-top: 4px;
     }
 
     .badge-row {
@@ -201,11 +218,6 @@
       text-align: center;
     }
 
-    .history-section {
-      margin-top: 20px;
-      padding-top: 8px;
-    }
-
     .loading {
       background: #fff;
       border: 1px dashed #ccc;
@@ -213,6 +225,56 @@
       border-radius: 14px;
       padding: 18px;
       text-align: center;
+    }
+
+    .history-section {
+      margin-top: 20px;
+    }
+
+    details {
+      background: #fff;
+      border: 1px solid #e5e5e5;
+      border-radius: 14px;
+      padding: 12px;
+    }
+
+    summary {
+      cursor: pointer;
+      font-size: 18px;
+      font-weight: bold;
+      list-style: none;
+      outline: none;
+    }
+
+    summary::-webkit-details-marker {
+      display: none;
+    }
+
+    .summary-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+    }
+
+    .summary-row span:last-child {
+      font-size: 14px;
+      color: #666;
+      font-weight: normal;
+    }
+
+    .history-body {
+      margin-top: 12px;
+    }
+
+    .notice {
+      margin-bottom: 12px;
+      padding: 10px 12px;
+      border-radius: 10px;
+      background: #111;
+      color: #fff;
+      font-size: 13px;
+      display: none;
     }
   </style>
 </head>
@@ -251,11 +313,23 @@
   </div>
 
   <div class="container">
+    <div id="notice" class="notice"></div>
+
+    <div class="section-title">未対応の注文</div>
     <div id="ordersArea" class="loading">読み込み中...</div>
 
     <div class="history-section">
-      <h2 style="font-size:18px; margin: 0 0 10px;">注文履歴</h2>
-      <div id="historyArea" class="loading">読み込み中...</div>
+      <details id="historyDetails">
+        <summary>
+          <div class="summary-row">
+            <span>注文履歴（配膳済み）</span>
+            <span id="historyCountText">0件</span>
+          </div>
+        </summary>
+        <div class="history-body">
+          <div id="historyArea" class="loading">読み込み中...</div>
+        </div>
+      </details>
     </div>
   </div>
 
@@ -267,6 +341,14 @@
 
     let currentFilter = "all";
     let allOrders = [];
+    let initializedRealtime = false;
+
+    function setFilter(filter, btn) {
+      currentFilter = filter;
+      document.querySelectorAll(".top-bar button").forEach(b => b.classList.remove("active"));
+      btn.classList.add("active");
+      render();
+    }
 
     function typeLabel(type) {
       if (type === "gift") return "奢り注文";
@@ -280,25 +362,30 @@
       return "badge-normal";
     }
 
-    function setFilter(filter, btn) {
-      currentFilter = filter;
-      document.querySelectorAll(".top-bar button").forEach(b => b.classList.remove("active"));
-      btn.classList.add("active");
-      render();
-    }
-
     function getFilteredOrders() {
-      if (currentFilter === "all") return allOrders.filter(order => order.status !== "done");
-      if (currentFilter === "pending") return allOrders.filter(order => order.status === "pending");
-      if (currentFilter === "done") return allOrders.filter(order => order.status === "done");
+      if (currentFilter === "all") {
+        return allOrders.filter(order => order.status !== "done");
+      }
+      if (currentFilter === "pending") {
+        return allOrders.filter(order => order.status === "pending");
+      }
+      if (currentFilter === "done") {
+        return allOrders.filter(order => order.status === "done");
+      }
       return allOrders.filter(order => order.order_type === currentFilter && order.status !== "done");
     }
 
     function renderSummary() {
-      document.getElementById("pendingCount").textContent = allOrders.filter(o => o.status !== "done").length;
-      document.getElementById("doneCount").textContent = allOrders.filter(o => o.status === "done").length;
-      document.getElementById("giftCount").textContent = allOrders.filter(o => o.order_type === "gift").length;
-      document.getElementById("supportCount").textContent = allOrders.filter(o => o.order_type === "staff_support").length;
+      const pending = allOrders.filter(o => o.status !== "done").length;
+      const done = allOrders.filter(o => o.status === "done").length;
+      const gift = allOrders.filter(o => o.order_type === "gift").length;
+      const support = allOrders.filter(o => o.order_type === "staff_support").length;
+
+      document.getElementById("pendingCount").textContent = pending;
+      document.getElementById("doneCount").textContent = done;
+      document.getElementById("giftCount").textContent = gift;
+      document.getElementById("supportCount").textContent = support;
+      document.getElementById("historyCountText").textContent = `${done}件`;
     }
 
     function renderOrders() {
@@ -313,14 +400,22 @@
       let html = "";
 
       filtered.forEach(order => {
+        const targetLabel =
+          order.order_type === "gift"
+            ? `Table ${escapeHtml(order.target_table || "-")}（Table ${escapeHtml(order.from_table || "-")} からの奢り）`
+            : order.order_type === "staff_support"
+              ? "スタッフ応援"
+              : `Table ${escapeHtml(order.target_table || "-")}`;
+
         html += `
           <div class="order-card">
+            <div class="table-big">Table ${escapeHtml(order.from_table || "-")}</div>
+
             <div class="order-head">
               <div>
                 <h3>${escapeHtml(order.item_name)}</h3>
                 <div class="meta">
-                  注文時刻: ${formatDate(order.created_at)}<br>
-                  注文元: Table ${escapeHtml(order.from_table || "-")}
+                  注文時間: ${formatDate(order.created_at)}
                 </div>
               </div>
               <div style="text-align:right;">
@@ -336,9 +431,7 @@
             <div class="detail-box">
               <div class="detail-line">数量: ${order.quantity}</div>
               ${order.mix ? `<div class="detail-line">割り方: ${escapeHtml(order.mix)}</div>` : ""}
-              ${order.order_type === "normal" ? `<div class="detail-line">届け先: Table ${escapeHtml(order.target_table || "-")}</div>` : ""}
-              ${order.order_type === "gift" ? `<div class="detail-line">届け先: Table ${escapeHtml(order.target_table || "-")}（Table ${escapeHtml(order.from_table || "-")} からの奢り）</div>` : ""}
-              ${order.order_type === "staff_support" ? `<div class="detail-line">区分: スタッフ応援</div>` : ""}
+              <div class="detail-line">届け先: ${targetLabel}</div>
               ${order.order_type === "staff_support" && order.support_message ? `<div class="detail-line">メッセージ: ${escapeHtml(order.support_message)}</div>` : ""}
             </div>
 
@@ -366,14 +459,22 @@
 
       let html = "";
       doneOrders.forEach(order => {
+        const targetLabel =
+          order.order_type === "gift"
+            ? `Table ${escapeHtml(order.target_table || "-")}（Table ${escapeHtml(order.from_table || "-")} からの奢り）`
+            : order.order_type === "staff_support"
+              ? "スタッフ応援"
+              : `Table ${escapeHtml(order.target_table || "-")}`;
+
         html += `
           <div class="order-card">
+            <div class="table-big">Table ${escapeHtml(order.from_table || "-")}</div>
+
             <div class="order-head">
               <div>
                 <h3>${escapeHtml(order.item_name)}</h3>
                 <div class="meta">
-                  注文時刻: ${formatDate(order.created_at)}<br>
-                  注文元: Table ${escapeHtml(order.from_table || "-")}
+                  注文時間: ${formatDate(order.created_at)}
                 </div>
               </div>
               <div style="text-align:right;">
@@ -389,9 +490,7 @@
             <div class="detail-box">
               <div class="detail-line">数量: ${order.quantity}</div>
               ${order.mix ? `<div class="detail-line">割り方: ${escapeHtml(order.mix)}</div>` : ""}
-              ${order.order_type === "normal" ? `<div class="detail-line">届け先: Table ${escapeHtml(order.target_table || "-")}</div>` : ""}
-              ${order.order_type === "gift" ? `<div class="detail-line">届け先: Table ${escapeHtml(order.target_table || "-")}（Table ${escapeHtml(order.from_table || "-")} からの奢り）</div>` : ""}
-              ${order.order_type === "staff_support" ? `<div class="detail-line">区分: スタッフ応援</div>` : ""}
+              <div class="detail-line">届け先: ${targetLabel}</div>
               ${order.order_type === "staff_support" && order.support_message ? `<div class="detail-line">メッセージ: ${escapeHtml(order.support_message)}</div>` : ""}
             </div>
           </div>
@@ -401,7 +500,12 @@
       historyArea.innerHTML = html;
     }
 
-    async function fetchOrders() {
+    async function fetchOrders(showLoading = false) {
+      if (showLoading) {
+        document.getElementById("ordersArea").innerHTML = `<div class="loading">読み込み中...</div>`;
+        document.getElementById("historyArea").innerHTML = `<div class="loading">読み込み中...</div>`;
+      }
+
       const { data, error } = await supabaseClient
         .from("orders")
         .select("*")
@@ -476,7 +580,75 @@
         .replaceAll("'", "&#039;");
     }
 
-    fetchOrders();
+    function showNotice(text) {
+      const notice = document.getElementById("notice");
+      notice.textContent = text;
+      notice.style.display = "block";
+      clearTimeout(showNotice.timer);
+      showNotice.timer = setTimeout(() => {
+        notice.style.display = "none";
+      }, 2500);
+    }
+
+    function playNewOrderSound() {
+      try {
+        const AudioContextClass = window.AudioContext || window.webkitAudioContext;
+        if (!AudioContextClass) return;
+
+        const ctx = new AudioContextClass();
+        const osc = ctx.createOscillator();
+        const gain = ctx.createGain();
+
+        osc.type = "sine";
+        osc.frequency.setValueAtTime(880, ctx.currentTime);
+        gain.gain.setValueAtTime(0.001, ctx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.12, ctx.currentTime + 0.01);
+        gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.28);
+
+        osc.connect(gain);
+        gain.connect(ctx.destination);
+
+        osc.start(ctx.currentTime);
+        osc.stop(ctx.currentTime + 0.28);
+      } catch (e) {
+        console.error(e);
+      }
+    }
+
+    function subscribeRealtime() {
+      if (initializedRealtime) return;
+      initializedRealtime = true;
+
+      supabaseClient
+        .channel("orders-realtime")
+        .on(
+          "postgres_changes",
+          { event: "INSERT", schema: "public", table: "orders" },
+          async () => {
+            playNewOrderSound();
+            showNotice("新しい注文が入りました");
+            await fetchOrders();
+          }
+        )
+        .on(
+          "postgres_changes",
+          { event: "UPDATE", schema: "public", table: "orders" },
+          async () => {
+            await fetchOrders();
+          }
+        )
+        .on(
+          "postgres_changes",
+          { event: "DELETE", schema: "public", table: "orders" },
+          async () => {
+            await fetchOrders();
+          }
+        )
+        .subscribe();
+    }
+
+    fetchOrders(true);
+    subscribeRealtime();
   </script>
 </body>
 </html>
