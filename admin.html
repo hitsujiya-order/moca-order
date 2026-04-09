@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>MOCA 管理画面</title>
+  <title>moca</title>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <style>
     * {
@@ -13,30 +13,34 @@
     body {
       margin: 0;
       font-family: Arial, sans-serif;
-      background: #f7f7f7;
       color: #111;
+      background:
+        radial-gradient(circle at top, rgba(255,255,255,0.92), rgba(243,243,243,0.96) 45%, rgba(232,232,232,1) 100%);
     }
 
     header {
       position: sticky;
       top: 0;
       z-index: 100;
-      background: #111;
+      background: rgba(28,28,28,0.94);
+      backdrop-filter: blur(10px);
       color: #fff;
       padding: 10px 14px 8px;
-      border-bottom: 1px solid #222;
+      border-bottom: 1px solid rgba(255,255,255,0.08);
     }
 
     header h1 {
       margin: 0;
       font-size: 20px;
       line-height: 1.2;
+      letter-spacing: 0.5px;
+      text-transform: lowercase;
     }
 
     header p {
       margin: 4px 0 0;
       font-size: 12px;
-      color: #ccc;
+      color: #d0d0d0;
       line-height: 1.4;
     }
 
@@ -44,17 +48,18 @@
       position: sticky;
       top: 54px;
       z-index: 99;
-      background: #fff;
+      background: rgba(250,250,250,0.9);
+      backdrop-filter: blur(10px);
       padding: 10px 12px;
-      border-bottom: 1px solid #ddd;
+      border-bottom: 1px solid rgba(0,0,0,0.08);
       display: flex;
       gap: 8px;
       overflow-x: auto;
     }
 
     .top-bar button {
-      border: 1px solid #ccc;
-      background: #fff;
+      border: 1px solid rgba(0,0,0,0.12);
+      background: rgba(255,255,255,0.88);
       color: #111;
       border-radius: 999px;
       padding: 10px 14px;
@@ -65,9 +70,9 @@
     }
 
     .top-bar button.active {
-      background: #111;
+      background: #202020;
       color: #fff;
-      border-color: #111;
+      border-color: #202020;
     }
 
     .summary {
@@ -75,15 +80,17 @@
       grid-template-columns: repeat(2, 1fr);
       gap: 8px;
       padding: 10px 12px;
-      background: #fff;
-      border-bottom: 1px solid #e5e5e5;
+      background: rgba(250,250,250,0.88);
+      backdrop-filter: blur(10px);
+      border-bottom: 1px solid rgba(0,0,0,0.06);
     }
 
     .summary-card {
-      background: #fafafa;
-      border: 1px solid #e5e5e5;
-      border-radius: 12px;
+      background: rgba(255,255,255,0.84);
+      border: 1px solid rgba(0,0,0,0.08);
+      border-radius: 14px;
       padding: 10px;
+      box-shadow: 0 6px 18px rgba(0,0,0,0.04);
     }
 
     .summary-card .label {
@@ -108,12 +115,13 @@
     }
 
     .order-card {
-      background: #fff;
-      border: 1px solid #e5e5e5;
+      background: rgba(255,255,255,0.82);
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(0,0,0,0.08);
       border-radius: 16px;
       padding: 14px;
       margin-bottom: 10px;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+      box-shadow: 0 8px 24px rgba(0,0,0,0.05);
     }
 
     .table-big {
@@ -121,7 +129,7 @@
       font-weight: 800;
       line-height: 1.1;
       margin-bottom: 8px;
-      letter-spacing: 0.4px;
+      letter-spacing: 0.3px;
     }
 
     .order-head {
@@ -162,14 +170,14 @@
     }
 
     .badge-normal { background: #111; }
-    .badge-gift { background: #8a2be2; }
-    .badge-support { background: #d97706; }
-    .badge-done { background: #16a34a; }
-    .badge-pending { background: #dc2626; }
+    .badge-gift { background: #7b3fe4; }
+    .badge-support { background: #c97a14; }
+    .badge-done { background: #169447; }
+    .badge-pending { background: #c62828; }
 
     .detail-box {
-      background: #fafafa;
-      border: 1px solid #eee;
+      background: rgba(248,248,248,0.92);
+      border: 1px solid rgba(0,0,0,0.06);
       border-radius: 12px;
       padding: 10px;
       margin-top: 10px;
@@ -192,7 +200,7 @@
       flex: 1;
       min-width: 120px;
       border: none;
-      border-radius: 10px;
+      border-radius: 12px;
       padding: 11px 12px;
       font-size: 14px;
       font-weight: bold;
@@ -200,18 +208,28 @@
     }
 
     .btn-done {
-      background: #111;
+      background: #202020;
       color: #fff;
     }
 
     .btn-delete {
-      background: #eee;
+      background: #ececec;
       color: #111;
     }
 
+    .btn-soldout {
+      background: #8b1f1f;
+      color: #fff;
+    }
+
+    .btn-resume {
+      background: #245b37;
+      color: #fff;
+    }
+
     .empty {
-      background: #fff;
-      border: 1px dashed #ccc;
+      background: rgba(255,255,255,0.82);
+      border: 1px dashed #cfcfcf;
       color: #666;
       border-radius: 14px;
       padding: 24px;
@@ -219,8 +237,8 @@
     }
 
     .loading {
-      background: #fff;
-      border: 1px dashed #ccc;
+      background: rgba(255,255,255,0.82);
+      border: 1px dashed #cfcfcf;
       color: #666;
       border-radius: 14px;
       padding: 18px;
@@ -232,10 +250,11 @@
     }
 
     details {
-      background: #fff;
-      border: 1px solid #e5e5e5;
+      background: rgba(255,255,255,0.82);
+      border: 1px solid rgba(0,0,0,0.08);
       border-radius: 14px;
       padding: 12px;
+      box-shadow: 0 8px 22px rgba(0,0,0,0.04);
     }
 
     summary {
@@ -270,17 +289,61 @@
     .notice {
       margin-bottom: 12px;
       padding: 10px 12px;
-      border-radius: 10px;
-      background: #111;
+      border-radius: 12px;
+      background: #202020;
       color: #fff;
       font-size: 13px;
       display: none;
+      box-shadow: 0 8px 20px rgba(0,0,0,0.12);
+    }
+
+    .soldout-panel {
+      margin-bottom: 18px;
+      padding: 14px;
+      background: rgba(255,255,255,0.82);
+      border: 1px solid rgba(0,0,0,0.08);
+      border-radius: 16px;
+      box-shadow: 0 8px 22px rgba(0,0,0,0.04);
+    }
+
+    .soldout-panel h2 {
+      margin: 0 0 12px;
+      font-size: 18px;
+    }
+
+    .soldout-list {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 8px;
+    }
+
+    .soldout-item {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      padding: 10px 12px;
+      border-radius: 12px;
+      background: rgba(248,248,248,0.92);
+      border: 1px solid rgba(0,0,0,0.06);
+    }
+
+    .soldout-name {
+      font-size: 14px;
+      font-weight: 600;
+      line-height: 1.4;
+    }
+
+    .soldout-meta {
+      font-size: 12px;
+      color: #666;
+      margin-top: 2px;
     }
   </style>
 </head>
 <body>
   <header>
-    <h1>MOCA 管理画面</h1>
+    <h1>moca</h1>
     <p>通常注文・奢り・スタッフ応援を一覧で確認できます</p>
   </header>
 
@@ -315,6 +378,11 @@
   <div class="container">
     <div id="notice" class="notice"></div>
 
+    <div class="soldout-panel">
+      <h2>売り切れ管理</h2>
+      <div id="soldoutArea" class="loading">読み込み中...</div>
+    </div>
+
     <div class="section-title">未対応の注文</div>
     <div id="ordersArea" class="loading">読み込み中...</div>
 
@@ -342,6 +410,67 @@
     let currentFilter = "all";
     let allOrders = [];
     let initializedRealtime = false;
+    let soldOutMap = {};
+
+    const menuItems = [
+      { name: "ハートランド生", category: "BEER" },
+      { name: "ハイネケン", category: "BEER" },
+      { name: "コロナ", category: "BEER" },
+      { name: "ギネス", category: "BEER" },
+      { name: "ジンベース", category: "GIN & VODKA" },
+      { name: "タンカレー / ボンベイ", category: "GIN & VODKA" },
+      { name: "ウォッカベース", category: "GIN & VODKA" },
+      { name: "ハイボール", category: "WHISKY & BOURBON" },
+      { name: "ビアハイボール / 梅酒ハイボール", category: "WHISKY & BOURBON" },
+      { name: "バーボン", category: "WHISKY & BOURBON" },
+      { name: "ジェームソン / バランタイン / グレングラント", category: "WHISKY & BOURBON" },
+      { name: "タリスカー 10年", category: "WHISKY & BOURBON" },
+      { name: "ラフロイグ 10年", category: "WHISKY & BOURBON" },
+      { name: "スタンダード モヒート", category: "MOJITO" },
+      { name: "マリブ モヒート", category: "MOJITO" },
+      { name: "イタリアン モヒート", category: "MOJITO" },
+      { name: "パッシモ モヒート", category: "MOJITO" },
+      { name: "マンゴヤン モヒート", category: "MOJITO" },
+      { name: "ミドリ モヒート", category: "MOJITO" },
+      { name: "ルジェカシス モヒート", category: "MOJITO" },
+      { name: "ティフィン モヒート", category: "MOJITO" },
+      { name: "パイナップル モヒート", category: "MOJITO" },
+      { name: "シャルトリューズ モヒート", category: "MOJITO" },
+      { name: "テキーラ ショット・ロック", category: "COCKTAILS" },
+      { name: "テキーラ サンライズ", category: "COCKTAILS" },
+      { name: "カンパリ オレンジ", category: "COCKTAILS" },
+      { name: "カンパリ ソーダ", category: "COCKTAILS" },
+      { name: "スプモーニ", category: "COCKTAILS" },
+      { name: "カシス オレンジ", category: "COCKTAILS" },
+      { name: "カシス グレープ", category: "COCKTAILS" },
+      { name: "カシス ソーダ", category: "COCKTAILS" },
+      { name: "レゲエパンチ", category: "COCKTAILS" },
+      { name: "ファジーネーブル", category: "COCKTAILS" },
+      { name: "ラムコーク", category: "COCKTAILS" },
+      { name: "マリブミルク", category: "COCKTAILS" },
+      { name: "チャイナブルー", category: "COCKTAILS" },
+      { name: "スノーボール", category: "COCKTAILS" },
+      { name: "カルーアミルク", category: "COCKTAILS" },
+      { name: "梅酒ビア", category: "OTHERS & WINE" },
+      { name: "梅エール", category: "OTHERS & WINE" },
+      { name: "パトロンコーヒー", category: "OTHERS & WINE" },
+      { name: "パトロンミルク", category: "OTHERS & WINE" },
+      { name: "ワイン グラス", category: "OTHERS & WINE" },
+      { name: "ワイン ボトル", category: "OTHERS & WINE" },
+      { name: "サラトガクーラー", category: "NON ALCOHOL & SOFT DRINK" },
+      { name: "シャーリーテンプル", category: "NON ALCOHOL & SOFT DRINK" },
+      { name: "ヴァージンモヒート", category: "NON ALCOHOL & SOFT DRINK" },
+      { name: "100%ジュース", category: "NON ALCOHOL & SOFT DRINK" },
+      { name: "お茶", category: "NON ALCOHOL & SOFT DRINK" },
+      { name: "コーラ", category: "NON ALCOHOL & SOFT DRINK" },
+      { name: "水", category: "NON ALCOHOL & SOFT DRINK" },
+      { name: "コーラフロート", category: "NON ALCOHOL & SOFT DRINK" },
+      { name: "コーヒーフロート", category: "NON ALCOHOL & SOFT DRINK" },
+      { name: "ノンアルコールビール", category: "NON ALCOHOL & SOFT DRINK" },
+      { name: "スタッフ応援ドリンク ￥300", category: "STAFF SUPPORT" },
+      { name: "スタッフ応援ドリンク ￥500", category: "STAFF SUPPORT" },
+      { name: "スタッフ応援ドリンク ￥1,000", category: "STAFF SUPPORT" }
+    ];
 
     function setFilter(filter, btn) {
       currentFilter = filter;
@@ -500,6 +629,72 @@
       historyArea.innerHTML = html;
     }
 
+    function renderSoldOutPanel() {
+      const soldoutArea = document.getElementById("soldoutArea");
+
+      if (!menuItems.length) {
+        soldoutArea.innerHTML = `<div class="empty">商品がありません</div>`;
+        return;
+      }
+
+      let html = `<div class="soldout-list">`;
+      menuItems.forEach(item => {
+        const soldOut = !!soldOutMap[item.name];
+        html += `
+          <div class="soldout-item">
+            <div>
+              <div class="soldout-name">${escapeHtml(item.name)}</div>
+              <div class="soldout-meta">${escapeHtml(item.category)}</div>
+            </div>
+            <button class="${soldOut ? 'btn-resume' : 'btn-soldout'}" onclick="toggleSoldOut('${escapeJs(item.name)}', ${soldOut})">
+              ${soldOut ? "販売再開" : "売り切れ"}
+            </button>
+          </div>
+        `;
+      });
+      html += `</div>`;
+
+      soldoutArea.innerHTML = html;
+    }
+
+    async function fetchMenuFlags() {
+      const { data, error } = await supabaseClient
+        .from("menu_flags")
+        .select("*");
+
+      if (error) {
+        console.error(error);
+        document.getElementById("soldoutArea").innerHTML = `<div class="empty">売り切れ情報の取得に失敗しました</div>`;
+        return;
+      }
+
+      soldOutMap = {};
+      (data || []).forEach(row => {
+        soldOutMap[row.item_name] = !!row.sold_out;
+      });
+
+      renderSoldOutPanel();
+    }
+
+    async function toggleSoldOut(itemName, current) {
+      const { error } = await supabaseClient
+        .from("menu_flags")
+        .upsert({
+          item_name: itemName,
+          sold_out: !current,
+          updated_at: new Date().toISOString()
+        });
+
+      if (error) {
+        console.error(error);
+        alert("売り切れ更新に失敗しました");
+        return;
+      }
+
+      showNotice(!current ? `${itemName} を売り切れにしました` : `${itemName} の販売を再開しました`);
+      await fetchMenuFlags();
+    }
+
     async function fetchOrders(showLoading = false) {
       if (showLoading) {
         document.getElementById("ordersArea").innerHTML = `<div class="loading">読み込み中...</div>`;
@@ -580,6 +775,10 @@
         .replaceAll("'", "&#039;");
     }
 
+    function escapeJs(text) {
+      return String(text ?? "").replaceAll("\\", "\\\\").replaceAll("'", "\\'");
+    }
+
     function showNotice(text) {
       const notice = document.getElementById("notice");
       notice.textContent = text;
@@ -644,10 +843,18 @@
             await fetchOrders();
           }
         )
+        .on(
+          "postgres_changes",
+          { event: "*", schema: "public", table: "menu_flags" },
+          async () => {
+            await fetchMenuFlags();
+          }
+        )
         .subscribe();
     }
 
     fetchOrders(true);
+    fetchMenuFlags();
     subscribeRealtime();
   </script>
 </body>
