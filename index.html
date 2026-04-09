@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>MOCA Mobile Order</title>
+  <title>moca order</title>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <style>
     * { box-sizing: border-box; }
@@ -11,30 +11,29 @@
     body {
       margin: 0;
       font-family: Arial, sans-serif;
-      background: #fff;
       color: #111;
+      background:
+        radial-gradient(circle at top, rgba(255,255,255,0.9), rgba(242,242,242,0.95) 45%, rgba(234,234,234,1) 100%);
     }
 
     header {
       position: sticky;
       top: 0;
       z-index: 100;
-      background: #fff;
-      border-bottom: 1px solid #ddd;
-      padding: 8px 12px 6px;
+      background: rgba(250,250,250,0.88);
+      backdrop-filter: blur(10px);
+      border-bottom: 1px solid rgba(0,0,0,0.08);
+      padding: 10px 14px 8px;
       text-align: center;
     }
 
     header h1 {
       margin: 0;
-      font-size: 22px;
-      letter-spacing: 0.5px;
-    }
-
-    header p {
-      margin: 4px 0 0;
-      color: #666;
-      font-size: 12px;
+      font-size: 20px;
+      letter-spacing: 0.8px;
+      font-weight: 700;
+      color: #1d1d1d;
+      text-transform: lowercase;
     }
 
     .table-banner {
@@ -42,20 +41,22 @@
       display: inline-block;
       padding: 6px 12px;
       border-radius: 999px;
-      background: #111;
+      background: #1e1e1e;
       color: #fff;
-      font-size: 13px;
+      font-size: 12px;
       font-weight: bold;
+      letter-spacing: 0.4px;
     }
 
     .top-buttons {
       display: flex;
       gap: 10px;
       padding: 10px 12px;
-      background: #fff;
-      border-bottom: 1px solid #eee;
+      background: rgba(250,250,250,0.88);
+      backdrop-filter: blur(10px);
+      border-bottom: 1px solid rgba(0,0,0,0.06);
       position: sticky;
-      top: 76px;
+      top: 55px;
       z-index: 99;
     }
 
@@ -63,41 +64,44 @@
       flex: 1;
       padding: 11px;
       border: none;
-      border-radius: 10px;
-      background: #111;
+      border-radius: 12px;
+      background: #202020;
       color: #fff;
-      font-size: 15px;
-      font-weight: bold;
+      font-size: 14px;
+      font-weight: 700;
       cursor: pointer;
+      box-shadow: 0 4px 14px rgba(0,0,0,0.12);
     }
 
     .category-bar {
       display: flex;
-      gap: 10px;
+      gap: 8px;
       overflow-x: auto;
       padding: 10px 12px;
-      background: #fff;
-      border-bottom: 1px solid #eee;
+      background: rgba(250,250,250,0.88);
+      backdrop-filter: blur(10px);
+      border-bottom: 1px solid rgba(0,0,0,0.06);
       position: sticky;
-      top: 132px;
+      top: 107px;
       z-index: 98;
     }
 
     .category-bar button {
       white-space: nowrap;
-      border: 1px solid #ccc;
-      background: #fff;
-      color: #111;
+      border: 1px solid rgba(0,0,0,0.12);
+      background: rgba(255,255,255,0.86);
+      color: #222;
       border-radius: 999px;
       padding: 9px 13px;
       font-size: 12px;
       cursor: pointer;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.04);
     }
 
     .category-bar button.active {
-      background: #111;
+      background: #202020;
       color: #fff;
-      border-color: #111;
+      border-color: #202020;
     }
 
     .container {
@@ -112,11 +116,12 @@
 
     .card {
       position: relative;
-      border: 1px solid #e5e5e5;
-      border-radius: 14px;
+      border: 1px solid rgba(0,0,0,0.08);
+      border-radius: 16px;
       padding: 12px;
-      background: #fff;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+      background: rgba(255,255,255,0.78);
+      backdrop-filter: blur(10px);
+      box-shadow: 0 8px 24px rgba(0,0,0,0.06);
       cursor: pointer;
       overflow: hidden;
     }
@@ -130,43 +135,48 @@
     }
 
     .card h3 {
-      font-size: 17px;
+      font-size: 14px;
       margin: 12px 0 6px;
-      line-height: 1.3;
+      line-height: 1.2;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      letter-spacing: 0.1px;
     }
 
     .desc {
-      font-size: 12px;
+      font-size: 11px;
       color: #666;
-      min-height: 34px;
-      line-height: 1.4;
+      min-height: 32px;
+      line-height: 1.35;
       margin-bottom: 8px;
     }
 
     .price {
-      font-size: 16px;
+      font-size: 15px;
       font-weight: bold;
       margin-bottom: 10px;
+      color: #1a1a1a;
     }
 
     .card button {
       width: 100%;
       padding: 10px;
-      background: #111;
+      background: #202020;
       color: #fff;
       border: none;
       border-radius: 10px;
-      font-size: 14px;
-      font-weight: bold;
+      font-size: 13px;
+      font-weight: 700;
       cursor: pointer;
     }
 
     .soldout-card {
-      opacity: 0.55;
+      opacity: 0.5;
     }
 
     .soldout-card button {
-      background: #999;
+      background: #8f8f8f;
       cursor: not-allowed;
     }
 
@@ -184,23 +194,27 @@
       display: inline-block;
       padding: 5px 9px;
       border-radius: 999px;
-      font-size: 11px;
+      font-size: 10px;
       font-weight: bold;
       color: #fff;
+      backdrop-filter: blur(8px);
     }
 
-    .badge-recommend { background: #111; }
-    .badge-popular { background: #c40000; }
-    .badge-limited { background: #a05a00; }
-    .badge-soldout { background: #666; }
+    .badge-recommend { background: rgba(26,26,26,0.92); }
+    .badge-popular { background: rgba(163, 28, 28, 0.92); }
+    .badge-limited { background: rgba(132, 88, 24, 0.92); }
+    .badge-soldout { background: rgba(100,100,100,0.92); }
+    .badge-selfonly { background: rgba(52, 88, 138, 0.92); }
 
     .empty-food, .support-box {
       padding: 20px;
-      border: 1px solid #e5e5e5;
-      border-radius: 14px;
-      background: #fafafa;
+      border: 1px solid rgba(0,0,0,0.08);
+      border-radius: 16px;
+      background: rgba(255,255,255,0.8);
+      backdrop-filter: blur(8px);
       line-height: 1.7;
       color: #444;
+      box-shadow: 0 8px 24px rgba(0,0,0,0.05);
     }
 
     .modal-bg {
@@ -219,10 +233,12 @@
       max-width: 430px;
       max-height: 88vh;
       overflow-y: auto;
-      background: #fff;
+      background: rgba(255,255,255,0.96);
       color: #111;
-      border-radius: 18px;
+      border-radius: 20px;
       padding: 18px;
+      box-shadow: 0 18px 42px rgba(0,0,0,0.18);
+      backdrop-filter: blur(12px);
     }
 
     .modal h2 {
@@ -262,7 +278,7 @@
     .qty-row button {
       width: 38px;
       height: 38px;
-      border: 1px solid #ccc;
+      border: 1px solid rgba(0,0,0,0.14);
       background: #fff;
       color: #111;
       border-radius: 10px;
@@ -286,7 +302,7 @@
     .modal-actions button {
       flex: 1;
       padding: 12px;
-      border-radius: 10px;
+      border-radius: 12px;
       font-size: 15px;
       font-weight: bold;
       cursor: pointer;
@@ -294,12 +310,12 @@
     }
 
     .btn-main {
-      background: #111;
+      background: #202020;
       color: #fff;
     }
 
     .btn-sub {
-      background: #eee;
+      background: #ececec;
       color: #111;
     }
 
@@ -328,8 +344,8 @@
     select, textarea {
       width: 100%;
       padding: 11px;
-      border: 1px solid #ccc;
-      border-radius: 10px;
+      border: 1px solid rgba(0,0,0,0.14);
+      border-radius: 12px;
       background: #fff;
       font-size: 15px;
     }
@@ -342,8 +358,8 @@
     .loading-box {
       padding: 14px;
       margin-top: 10px;
-      background: #f8f8f8;
-      border: 1px solid #e6e6e6;
+      background: rgba(255,255,255,0.85);
+      border: 1px solid rgba(0,0,0,0.08);
       border-radius: 12px;
       color: #555;
       text-align: center;
@@ -352,8 +368,7 @@
 </head>
 <body>
   <header>
-    <h1>MOCA ORDER</h1>
-    <p>モバイルオーダー</p>
+    <h1>moca order</h1>
     <div class="table-banner" id="tableBanner">Table 1</div>
   </header>
 
@@ -524,6 +539,7 @@
       { category: "NON ALCOHOL & SOFT DRINK", name: "100%ジュース", price: 600, desc: "ソフトドリンク", image: "https://images.unsplash.com/photo-1542444592-0d7230d24b18" },
       { category: "NON ALCOHOL & SOFT DRINK", name: "お茶", price: 600, desc: "ソフトドリンク", image: "https://images.unsplash.com/photo-1542444592-0d7230d24b18" },
       { category: "NON ALCOHOL & SOFT DRINK", name: "コーラ", price: 600, desc: "ソフトドリンク", image: "https://images.unsplash.com/photo-1542444592-0d7230d24b18" },
+      { category: "NON ALCOHOL & SOFT DRINK", name: "水", price: 0, desc: "自分のテーブル専用", selfOnly: true, image: "https://images.unsplash.com/photo-1548839140-29a749e1cf4d" },
       { category: "NON ALCOHOL & SOFT DRINK", name: "コーラフロート", price: 700, desc: "フロート", popular: true, image: "https://images.unsplash.com/photo-1542444592-0d7230d24b18" },
       { category: "NON ALCOHOL & SOFT DRINK", name: "コーヒーフロート", price: 700, desc: "フロート", image: "https://images.unsplash.com/photo-1542444592-0d7230d24b18" },
       { category: "NON ALCOHOL & SOFT DRINK", name: "ノンアルコールビール", price: 700, desc: "キリン零ICHI", image: "https://images.unsplash.com/photo-1563379091339-03246963d29c" },
@@ -538,6 +554,38 @@
     let quantity = 1;
     let cart = JSON.parse(localStorage.getItem("mocaCart")) || [];
     let loadingHistory = false;
+    let soldOutMap = {};
+
+    async function fetchMenuFlags() {
+      const { data, error } = await supabaseClient
+        .from("menu_flags")
+        .select("*");
+
+      if (error) {
+        console.error(error);
+        return;
+      }
+
+      soldOutMap = {};
+      (data || []).forEach(row => {
+        soldOutMap[row.item_name] = !!row.sold_out;
+      });
+
+      renderMenu();
+    }
+
+    function subscribeMenuFlags() {
+      supabaseClient
+        .channel("menu-flags-realtime")
+        .on(
+          "postgres_changes",
+          { event: "*", schema: "public", table: "menu_flags" },
+          async () => {
+            await fetchMenuFlags();
+          }
+        )
+        .subscribe();
+    }
 
     function setupGiftTableOptions() {
       const select = document.getElementById("giftTarget");
@@ -568,12 +616,18 @@
       });
     }
 
+    function isSoldOut(item) {
+      if (typeof soldOutMap[item.name] === "boolean") return soldOutMap[item.name];
+      return !!item.soldOut;
+    }
+
     function getBadges(item) {
       let html = "";
       if (item.recommend) html += `<span class="badge badge-recommend">おすすめ</span>`;
       if (item.popular) html += `<span class="badge badge-popular">人気</span>`;
       if (item.limited) html += `<span class="badge badge-limited">限定</span>`;
-      if (item.soldOut) html += `<span class="badge badge-soldout">SOLD OUT</span>`;
+      if (item.selfOnly) html += `<span class="badge badge-selfonly">自席のみ</span>`;
+      if (isSoldOut(item)) html += `<span class="badge badge-soldout">SOLD OUT</span>`;
       return html;
     }
 
@@ -599,9 +653,9 @@
           html += `
             <div class="card" onclick="openItemModal(${idx})">
               <div class="badge-wrap">${getBadges(item)}</div>
-              <img src="${item.image}" alt="${item.name}">
-              <h3>${item.name}</h3>
-              <div class="desc">${item.desc}</div>
+              <img src="${item.image}" alt="${escapeHtml(item.name)}">
+              <h3>${escapeHtml(item.name)}</h3>
+              <div class="desc">${escapeHtml(item.desc)}</div>
               <div class="price">¥${item.price.toLocaleString()}</div>
               <button type="button">選択する</button>
             </div>
@@ -617,14 +671,15 @@
       let html = `<div class="menu-grid">`;
       filtered.forEach(item => {
         const idx = items.indexOf(item);
+        const soldOut = isSoldOut(item);
         html += `
-          <div class="card ${item.soldOut ? 'soldout-card' : ''}" onclick="${item.soldOut ? '' : `openItemModal(${idx})`}">
+          <div class="card ${soldOut ? 'soldout-card' : ''}" onclick="${soldOut ? '' : `openItemModal(${idx})`}">
             <div class="badge-wrap">${getBadges(item)}</div>
-            <img src="${item.image}" alt="${item.name}">
-            <h3>${item.name}</h3>
-            <div class="desc">${item.desc}</div>
+            <img src="${item.image}" alt="${escapeHtml(item.name)}">
+            <h3 title="${escapeHtml(item.name)}">${escapeHtml(item.name)}</h3>
+            <div class="desc">${escapeHtml(item.desc)}</div>
             <div class="price">¥${item.price.toLocaleString()}</div>
-            <button type="button" ${item.soldOut ? 'disabled' : ''}>${item.soldOut ? '売り切れ' : '選択する'}</button>
+            <button type="button" ${soldOut ? 'disabled' : ''}>${soldOut ? '売り切れ' : '選択する'}</button>
           </div>
         `;
       });
@@ -645,7 +700,7 @@
       document.getElementById("modalPrice").textContent = "¥" + selectedItem.price.toLocaleString();
 
       document.getElementById("drinkOptions").style.display = shouldShowMixOptions(selectedItem) ? "block" : "none";
-      document.getElementById("giftModeWrap").style.display = selectedItem.support ? "none" : "block";
+      document.getElementById("giftModeWrap").style.display = (selectedItem.support || selectedItem.selfOnly) ? "none" : "block";
       document.getElementById("giftTargetWrap").style.display = "none";
       document.getElementById("messageWrap").style.display = selectedItem.support ? "block" : "none";
 
@@ -685,7 +740,9 @@
 
       const giftMode = selectedItem.support
         ? "staff"
-        : (document.querySelector('input[name="giftMode"]:checked')?.value || "self");
+        : selectedItem.selfOnly
+          ? "self"
+          : (document.querySelector('input[name="giftMode"]:checked')?.value || "self");
 
       const targetTable = giftMode === "gift"
         ? document.getElementById("giftTarget").value
@@ -709,7 +766,8 @@
         isGift: giftMode === "gift",
         support: selectedItem.support || false,
         supportMessage,
-        orderType
+        orderType,
+        selfOnly: selectedItem.selfOnly || false
       });
 
       localStorage.setItem("mocaCart", JSON.stringify(cart));
@@ -903,6 +961,8 @@
     setupGiftTableOptions();
     renderCategories();
     renderMenu();
+    fetchMenuFlags();
+    subscribeMenuFlags();
   </script>
 </body>
 </html>
