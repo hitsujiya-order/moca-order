@@ -7,54 +7,61 @@
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <style>
     * { box-sizing: border-box; }
+
     body {
       margin: 0;
       font-family: Arial, sans-serif;
       background: #fff;
       color: #111;
     }
+
     header {
       position: sticky;
       top: 0;
       z-index: 100;
       background: #fff;
       border-bottom: 1px solid #ddd;
-      padding: 14px 12px 10px;
+      padding: 8px 12px 6px;
       text-align: center;
     }
+
     header h1 {
       margin: 0;
-      font-size: 28px;
-      letter-spacing: 1px;
+      font-size: 22px;
+      letter-spacing: 0.5px;
     }
+
     header p {
-      margin: 6px 0 0;
+      margin: 4px 0 0;
       color: #666;
-      font-size: 14px;
+      font-size: 12px;
     }
+
     .table-banner {
-      margin-top: 10px;
+      margin-top: 8px;
       display: inline-block;
-      padding: 8px 14px;
+      padding: 6px 12px;
       border-radius: 999px;
       background: #111;
       color: #fff;
-      font-size: 14px;
+      font-size: 13px;
       font-weight: bold;
     }
+
     .top-buttons {
       display: flex;
       gap: 10px;
-      padding: 12px;
+      padding: 10px 12px;
       background: #fff;
       border-bottom: 1px solid #eee;
       position: sticky;
-      top: 98px;
+      top: 76px;
       z-index: 99;
     }
+
     .top-buttons button {
       flex: 1;
-      padding: 12px;
+      padding: 11px;
       border: none;
       border-radius: 10px;
       background: #111;
@@ -63,38 +70,46 @@
       font-weight: bold;
       cursor: pointer;
     }
+
     .category-bar {
       display: flex;
       gap: 10px;
       overflow-x: auto;
-      padding: 12px;
+      padding: 10px 12px;
       background: #fff;
       border-bottom: 1px solid #eee;
       position: sticky;
-      top: 160px;
+      top: 132px;
       z-index: 98;
     }
+
     .category-bar button {
       white-space: nowrap;
       border: 1px solid #ccc;
       background: #fff;
       color: #111;
       border-radius: 999px;
-      padding: 10px 14px;
-      font-size: 13px;
+      padding: 9px 13px;
+      font-size: 12px;
       cursor: pointer;
     }
+
     .category-bar button.active {
       background: #111;
       color: #fff;
       border-color: #111;
     }
-    .container { padding: 14px; }
+
+    .container {
+      padding: 14px;
+    }
+
     .menu-grid {
       display: grid;
       grid-template-columns: repeat(2, 1fr);
       gap: 14px;
     }
+
     .card {
       position: relative;
       border: 1px solid #e5e5e5;
@@ -105,6 +120,7 @@
       cursor: pointer;
       overflow: hidden;
     }
+
     .card img {
       width: 100%;
       height: 130px;
@@ -112,11 +128,13 @@
       border-radius: 12px;
       background: #f4f4f4;
     }
+
     .card h3 {
       font-size: 17px;
       margin: 12px 0 6px;
       line-height: 1.3;
     }
+
     .desc {
       font-size: 12px;
       color: #666;
@@ -124,11 +142,13 @@
       line-height: 1.4;
       margin-bottom: 8px;
     }
+
     .price {
       font-size: 16px;
       font-weight: bold;
       margin-bottom: 10px;
     }
+
     .card button {
       width: 100%;
       padding: 10px;
@@ -140,11 +160,16 @@
       font-weight: bold;
       cursor: pointer;
     }
-    .soldout-card { opacity: 0.55; }
+
+    .soldout-card {
+      opacity: 0.55;
+    }
+
     .soldout-card button {
       background: #999;
       cursor: not-allowed;
     }
+
     .badge-wrap {
       position: absolute;
       top: 18px;
@@ -154,6 +179,7 @@
       flex-wrap: wrap;
       z-index: 2;
     }
+
     .badge {
       display: inline-block;
       padding: 5px 9px;
@@ -162,6 +188,7 @@
       font-weight: bold;
       color: #fff;
     }
+
     .badge-recommend { background: #111; }
     .badge-popular { background: #c40000; }
     .badge-limited { background: #a05a00; }
@@ -172,7 +199,7 @@
       border: 1px solid #e5e5e5;
       border-radius: 14px;
       background: #fafafa;
-      line-height: 1.6;
+      line-height: 1.7;
       color: #444;
     }
 
@@ -186,6 +213,7 @@
       justify-content: center;
       padding: 18px;
     }
+
     .modal {
       width: 100%;
       max-width: 430px;
@@ -196,32 +224,41 @@
       border-radius: 18px;
       padding: 18px;
     }
+
     .modal h2 {
       margin: 0 0 8px;
       font-size: 22px;
     }
+
     .modal p {
       color: #555;
       line-height: 1.5;
       margin-top: 0;
     }
-    .option-group { margin: 16px 0; }
+
+    .option-group {
+      margin: 16px 0;
+    }
+
     .option-title {
       font-weight: bold;
       margin-bottom: 8px;
       display: block;
     }
+
     .option-group label {
       display: block;
       margin: 8px 0;
       font-size: 15px;
     }
+
     .qty-row {
       display: flex;
       align-items: center;
       gap: 10px;
       margin: 16px 0;
     }
+
     .qty-row button {
       width: 38px;
       height: 38px;
@@ -232,17 +269,20 @@
       font-size: 18px;
       cursor: pointer;
     }
+
     .qty-number {
       min-width: 30px;
       text-align: center;
       font-size: 18px;
       font-weight: bold;
     }
+
     .modal-actions {
       display: flex;
       gap: 10px;
       margin-top: 18px;
     }
+
     .modal-actions button {
       flex: 1;
       padding: 12px;
@@ -252,32 +292,39 @@
       cursor: pointer;
       border: none;
     }
+
     .btn-main {
       background: #111;
       color: #fff;
     }
+
     .btn-sub {
       background: #eee;
       color: #111;
     }
+
     .cart-item, .history-item, .confirm-item {
       border-bottom: 1px solid #eee;
       padding: 10px 0;
     }
+
     .cart-item:last-child, .history-item:last-child, .confirm-item:last-child {
       border-bottom: none;
     }
+
     .small-text {
       color: #666;
       font-size: 13px;
       margin-top: 4px;
       line-height: 1.5;
     }
+
     .total-box {
       margin: 16px 0;
       font-size: 18px;
       font-weight: bold;
     }
+
     select, textarea {
       width: 100%;
       padding: 11px;
@@ -286,10 +333,12 @@
       background: #fff;
       font-size: 15px;
     }
+
     textarea {
       min-height: 90px;
       resize: vertical;
     }
+
     .loading-box {
       padding: 14px;
       margin-top: 10px;
@@ -540,7 +589,7 @@
         const supportCards = items.filter(item => item.category === "STAFF SUPPORT");
         let html = `
           <div class="support-box">
-            「今日の接客、良かった！」「カクテルが美味しかった！」と思っていただけたら、スタッフへ応援（投げ銭）をいただけると励みになります。いただいたチップは全額、スタッフの研修や福利厚生に活用させていただきます。
+            「今日の接客、良かった！」「カクテルが美味しかった！」と思っていただけたら、スタッフへ応援(投げ銭)をいただけると励みになります。いただいたチップは全額、福利厚生に活用させていただきます。
           </div>
           <div style="height:14px;"></div>
           <div class="menu-grid">
@@ -680,18 +729,18 @@
 
         cart.forEach(item => {
           total += item.subtotal;
-          html += `<div class="cart-item"><strong>${item.name}</strong>`;
+          html += `<div class="cart-item"><strong>${escapeHtml(item.name)}</strong>`;
 
-          if (item.mix) html += `<div class="small-text">割り方：${item.mix}</div>`;
+          if (item.mix) html += `<div class="small-text">割り方：${escapeHtml(item.mix)}</div>`;
           html += `<div class="small-text">数量：${item.quantity}</div>`;
 
           if (item.orderType === "gift") {
-            html += `<div class="small-text">届け先：Table ${item.targetTable}（Table ${item.fromTable} からの奢り）</div>`;
+            html += `<div class="small-text">届け先：Table ${escapeHtml(item.targetTable)}（Table ${escapeHtml(item.fromTable)} からの奢り）</div>`;
           } else if (item.orderType === "staff_support") {
             html += `<div class="small-text">区分：スタッフ応援</div>`;
             if (item.supportMessage) html += `<div class="small-text">メッセージ：${escapeHtml(item.supportMessage)}</div>`;
           } else {
-            html += `<div class="small-text">届け先：Table ${item.targetTable}</div>`;
+            html += `<div class="small-text">届け先：Table ${escapeHtml(item.targetTable)}</div>`;
           }
 
           html += `<div class="small-text">小計：¥${item.subtotal.toLocaleString()}</div></div>`;
@@ -719,17 +768,17 @@
 
       cart.forEach(item => {
         total += item.subtotal;
-        html += `<div class="confirm-item"><strong>${item.name}</strong>`;
-        if (item.mix) html += `<div class="small-text">割り方：${item.mix}</div>`;
+        html += `<div class="confirm-item"><strong>${escapeHtml(item.name)}</strong>`;
+        if (item.mix) html += `<div class="small-text">割り方：${escapeHtml(item.mix)}</div>`;
         html += `<div class="small-text">数量：${item.quantity}</div>`;
 
         if (item.orderType === "gift") {
-          html += `<div class="small-text">届け先：Table ${item.targetTable}（Table ${item.fromTable} からの奢り）</div>`;
+          html += `<div class="small-text">届け先：Table ${escapeHtml(item.targetTable)}（Table ${escapeHtml(item.fromTable)} からの奢り）</div>`;
         } else if (item.orderType === "staff_support") {
           html += `<div class="small-text">区分：スタッフ応援</div>`;
           if (item.supportMessage) html += `<div class="small-text">メッセージ：${escapeHtml(item.supportMessage)}</div>`;
         } else {
-          html += `<div class="small-text">届け先：Table ${item.targetTable}</div>`;
+          html += `<div class="small-text">届け先：Table ${escapeHtml(item.targetTable)}</div>`;
         }
 
         html += `<div class="small-text">小計：¥${item.subtotal.toLocaleString()}</div></div>`;
@@ -843,7 +892,7 @@
     }
 
     function escapeHtml(text) {
-      return String(text)
+      return String(text ?? "")
         .replaceAll("&", "&amp;")
         .replaceAll("<", "&lt;")
         .replaceAll(">", "&gt;")
