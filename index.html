@@ -396,10 +396,10 @@
   </div>
 
   <script>
-    const SUPABASE_URL = "https://ztmuvqipzInmtsbbtuyh.supabase.co";
+    const SUPABASE_URL = "https://ztmuvqipzlnmtsbbtuyh.supabase.co";
     const SUPABASE_ANON_KEY = "sb_publishable_WI0CrS5TGxfQjmjTFtUHmA_Xa5Ey4j5";
 
-    const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+    const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
     const tableNumber = new URLSearchParams(window.location.search).get("table") || "1";
     document.getElementById("tableBanner").textContent = "Table " + tableNumber;
@@ -765,7 +765,7 @@
         status: "pending"
       }));
 
-      const { error } = await supabase.from("orders").insert(rows);
+      const { error } = await supabaseClient.from("orders").insert(rows);
 
       if (error) {
         console.error(error);
@@ -787,7 +787,7 @@
       if (loadingHistory) return;
       loadingHistory = true;
 
-      const { data, error } = await supabase
+      const { data, error } = await supabaseClient
         .from("orders")
         .select("*")
         .eq("from_table", tableNumber)
