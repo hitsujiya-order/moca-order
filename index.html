@@ -752,11 +752,6 @@
         return;
       }
 
-      if (SUPABASE_ANON_KEY === "ここにPublishable keyを貼ってね") {
-        alert("SupabaseのPublishable keyがまだ入っていません");
-        return;
-      }
-
       const rows = cart.map(item => ({
         from_table: item.fromTable,
         target_table: item.orderType === "staff_support" ? null : item.targetTable,
