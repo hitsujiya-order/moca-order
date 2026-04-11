@@ -66,8 +66,8 @@
       background: rgba(255,255,255,0.04);
       color: #eef2ff;
       border-radius: 999px;
-      padding: 10px 14px;
-      font-size: 13px;
+      padding: 9px 13px;
+      font-size: 12px;
       font-weight: bold;
       cursor: pointer;
       white-space: nowrap;
@@ -82,7 +82,7 @@
     }
 
     .table-filter-bar {
-      padding: 10px 12px;
+      padding: 10px 12px 6px;
       display: flex;
       gap: 8px;
       overflow-x: auto;
@@ -120,7 +120,7 @@
     }
 
     .section-title {
-      font-size: 18px;
+      font-size: 17px;
       font-weight: bold;
       margin: 0 0 10px;
       color: #f7f9ff;
@@ -130,61 +130,70 @@
       background: rgba(255,255,255,0.05);
       backdrop-filter: blur(12px);
       border: 1px solid rgba(255,255,255,0.08);
-      border-radius: 16px;
-      padding: 14px;
-      margin-bottom: 10px;
-      box-shadow: 0 10px 28px rgba(0,0,0,0.18);
+      border-radius: 14px;
+      padding: 9px 10px;
+      margin-bottom: 8px;
+      box-shadow: 0 8px 22px rgba(0,0,0,0.18);
     }
 
     .order-card.late {
       border: 1px solid #ff3b3b;
-      box-shadow: 0 0 16px rgba(255,59,59,0.45), 0 10px 28px rgba(0,0,0,0.18);
+      box-shadow: 0 0 16px rgba(255,59,59,0.45), 0 8px 22px rgba(0,0,0,0.18);
+    }
+
+    .order-top {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+      margin-bottom: 6px;
     }
 
     .table-big {
-      font-size: 28px;
+      font-size: 18px;
       font-weight: 800;
       line-height: 1.1;
-      margin-bottom: 8px;
-      letter-spacing: 0.3px;
+      letter-spacing: 0.2px;
       color: #ffffff;
       text-shadow: 0 0 18px rgba(96,165,250,0.18);
     }
 
-    .order-head {
+    .order-price {
+      font-size: 15px;
+      font-weight: bold;
+      color: #fff;
+    }
+
+    .order-name {
+      font-size: 14px;
+      font-weight: bold;
+      color: #fff;
+      line-height: 1.3;
+      margin-bottom: 4px;
+    }
+
+    .order-meta {
       display: flex;
-      justify-content: space-between;
-      align-items: flex-start;
-      gap: 10px;
-      margin-bottom: 10px;
-    }
-
-    .order-head h3 {
-      margin: 0;
-      font-size: 18px;
+      flex-wrap: wrap;
+      gap: 6px;
+      font-size: 11px;
+      color: #b8c1d4;
+      margin-bottom: 6px;
       line-height: 1.4;
-      color: #ffffff;
-    }
-
-    .meta {
-      font-size: 13px;
-      color: #aeb7c8;
-      line-height: 1.6;
-      margin-top: 4px;
     }
 
     .badge-row {
       display: flex;
       flex-wrap: wrap;
       gap: 6px;
-      margin: 8px 0 10px;
+      margin: 6px 0;
     }
 
     .badge {
       display: inline-block;
-      padding: 5px 9px;
+      padding: 4px 8px;
       border-radius: 999px;
-      font-size: 11px;
+      font-size: 10px;
       font-weight: bold;
       color: #fff;
     }
@@ -198,31 +207,31 @@
     .detail-box {
       background: rgba(255,255,255,0.04);
       border: 1px solid rgba(255,255,255,0.06);
-      border-radius: 12px;
-      padding: 10px;
-      margin-top: 10px;
+      border-radius: 10px;
+      padding: 8px;
+      margin-top: 6px;
     }
 
     .detail-line {
-      font-size: 13px;
+      font-size: 11px;
       color: #d2d9e8;
-      line-height: 1.7;
+      line-height: 1.55;
     }
 
     .actions {
       display: flex;
-      gap: 8px;
-      margin-top: 12px;
+      gap: 6px;
+      margin-top: 8px;
       flex-wrap: wrap;
     }
 
     .actions button {
       flex: 1;
-      min-width: 120px;
+      min-width: 90px;
       border: none;
-      border-radius: 12px;
-      padding: 11px 12px;
-      font-size: 14px;
+      border-radius: 10px;
+      padding: 9px 10px;
+      font-size: 12px;
       font-weight: bold;
       cursor: pointer;
     }
@@ -248,13 +257,19 @@
       color: #fff;
     }
 
+    .btn-reset {
+      background: linear-gradient(135deg, #b45309, #92400e);
+      color: #fff;
+    }
+
     .empty {
       background: rgba(255,255,255,0.05);
       border: 1px dashed rgba(255,255,255,0.16);
       color: #b6bfd1;
       border-radius: 14px;
-      padding: 24px;
+      padding: 20px;
       text-align: center;
+      font-size: 13px;
     }
 
     .loading {
@@ -262,13 +277,14 @@
       border: 1px dashed rgba(255,255,255,0.16);
       color: #b6bfd1;
       border-radius: 14px;
-      padding: 18px;
+      padding: 16px;
       text-align: center;
+      font-size: 13px;
     }
 
     .history-section,
     .soldout-section {
-      margin-top: 20px;
+      margin-top: 18px;
     }
 
     details {
@@ -282,7 +298,7 @@
 
     summary {
       cursor: pointer;
-      font-size: 18px;
+      font-size: 17px;
       font-weight: bold;
       list-style: none;
       outline: none;
@@ -301,7 +317,7 @@
     }
 
     .summary-row span:last-child {
-      font-size: 14px;
+      font-size: 13px;
       color: #aeb7c8;
       font-weight: normal;
     }
@@ -340,14 +356,14 @@
     }
 
     .soldout-name {
-      font-size: 14px;
+      font-size: 13px;
       font-weight: 600;
       line-height: 1.4;
       color: #fff;
     }
 
     .soldout-meta {
-      font-size: 12px;
+      font-size: 11px;
       color: #aeb7c8;
       margin-top: 2px;
     }
@@ -448,7 +464,7 @@
     let selectedTable = null;
 
     const menuItems = [
-      { name: "ハートランド生", category: "BEER" },
+      { name: "ハートランド", category: "BEER" },
       { name: "ハイネケン", category: "BEER" },
       { name: "コロナ", category: "BEER" },
       { name: "ギネス", category: "BEER" },
@@ -515,6 +531,9 @@
       allTables.forEach(t => {
         html += `<button class="${selectedTable === t ? 'active' : ''}" onclick="filterTable('${escapeJs(t)}')">T${escapeHtml(t)}</button>`;
       });
+      if (selectedTable !== null) {
+        html += `<button class="btn-reset" onclick="resetTable('${escapeJs(selectedTable)}')">履歴削除</button>`;
+      }
       bar.innerHTML = html;
     }
 
@@ -591,25 +610,25 @@
       filtered.forEach(order => {
         const targetLabel =
           order.order_type === "gift"
-            ? `Table ${escapeHtml(order.target_table || "-")}（Table ${escapeHtml(order.from_table || "-")} からの奢り）`
+            ? `→ T${escapeHtml(order.target_table || "-")}（奢り）`
             : order.order_type === "staff_support"
               ? "スタッフ応援"
-              : `Table ${escapeHtml(order.target_table || "-")}`;
+              : `→ T${escapeHtml(order.target_table || "-")}`;
 
         html += `
           <div class="order-card ${isLate(order.created_at) && order.status !== 'done' ? 'late' : ''}">
-            <div class="table-big">Table ${escapeHtml(order.from_table || "-")}</div>
+            <div class="order-top">
+              <div class="table-big">T${escapeHtml(order.from_table || "-")}</div>
+              <div class="order-price">¥${Number(order.subtotal || 0).toLocaleString()}</div>
+            </div>
 
-            <div class="order-head">
-              <div>
-                <h3>${escapeHtml(order.item_name)}</h3>
-                <div class="meta">
-                  注文時間: ${formatDate(order.created_at)}
-                </div>
-              </div>
-              <div style="text-align:right;">
-                <div style="font-size:18px; font-weight:bold;">¥${Number(order.subtotal || 0).toLocaleString()}</div>
-              </div>
+            <div class="order-name">${escapeHtml(order.item_name)}</div>
+
+            <div class="order-meta">
+              <span>${formatTime(order.created_at)}</span>
+              <span>${order.quantity}個</span>
+              ${order.mix ? `<span>${escapeHtml(order.mix)}</span>` : ""}
+              <span>${targetLabel}</span>
             </div>
 
             <div class="badge-row">
@@ -617,16 +636,15 @@
               <span class="badge ${order.status === "done" ? "badge-done" : "badge-pending"}">${order.status === "done" ? "提供済み" : "未提供"}</span>
             </div>
 
-            <div class="detail-box">
-              <div class="detail-line">数量: ${order.quantity}</div>
-              ${order.mix ? `<div class="detail-line">割り方: ${escapeHtml(order.mix)}</div>` : ""}
-              <div class="detail-line">届け先: ${targetLabel}</div>
-              ${order.order_type === "staff_support" && order.support_message ? `<div class="detail-line">メッセージ: ${escapeHtml(order.support_message)}</div>` : ""}
-            </div>
+            ${order.support_message ? `
+              <div class="detail-box">
+                <div class="detail-line">メッセージ: ${escapeHtml(order.support_message)}</div>
+              </div>
+            ` : ""}
 
             <div class="actions">
               <button class="btn-done" onclick="toggleDone('${order.id}', '${order.status}')">
-                ${order.status === "done" ? "未提供に戻す" : "提供済みにする"}
+                ${order.status === "done" ? "未提供に戻す" : "提供済み"}
               </button>
               <button class="btn-delete" onclick="deleteOrder('${order.id}')">削除</button>
             </div>
@@ -654,37 +672,30 @@
       doneOrders.forEach(order => {
         const targetLabel =
           order.order_type === "gift"
-            ? `Table ${escapeHtml(order.target_table || "-")}（Table ${escapeHtml(order.from_table || "-")} からの奢り）`
+            ? `→ T${escapeHtml(order.target_table || "-")}（奢り）`
             : order.order_type === "staff_support"
               ? "スタッフ応援"
-              : `Table ${escapeHtml(order.target_table || "-")}`;
+              : `→ T${escapeHtml(order.target_table || "-")}`;
 
         html += `
           <div class="order-card">
-            <div class="table-big">Table ${escapeHtml(order.from_table || "-")}</div>
+            <div class="order-top">
+              <div class="table-big">T${escapeHtml(order.from_table || "-")}</div>
+              <div class="order-price">¥${Number(order.subtotal || 0).toLocaleString()}</div>
+            </div>
 
-            <div class="order-head">
-              <div>
-                <h3>${escapeHtml(order.item_name)}</h3>
-                <div class="meta">
-                  注文時間: ${formatDate(order.created_at)}
-                </div>
-              </div>
-              <div style="text-align:right;">
-                <div style="font-size:18px; font-weight:bold;">¥${Number(order.subtotal || 0).toLocaleString()}</div>
-              </div>
+            <div class="order-name">${escapeHtml(order.item_name)}</div>
+
+            <div class="order-meta">
+              <span>${formatTime(order.created_at)}</span>
+              <span>${order.quantity}個</span>
+              ${order.mix ? `<span>${escapeHtml(order.mix)}</span>` : ""}
+              <span>${targetLabel}</span>
             </div>
 
             <div class="badge-row">
               <span class="badge ${typeBadgeClass(order.order_type)}">${typeLabel(order.order_type)}</span>
-              <span class="badge badge-done">提供済み履歴</span>
-            </div>
-
-            <div class="detail-box">
-              <div class="detail-line">数量: ${order.quantity}</div>
-              ${order.mix ? `<div class="detail-line">割り方: ${escapeHtml(order.mix)}</div>` : ""}
-              <div class="detail-line">届け先: ${targetLabel}</div>
-              ${order.order_type === "staff_support" && order.support_message ? `<div class="detail-line">メッセージ: ${escapeHtml(order.support_message)}</div>` : ""}
+              <span class="badge badge-done">提供済み</span>
             </div>
           </div>
         `;
@@ -818,15 +829,35 @@
       await fetchOrders();
     }
 
+    async function resetTable(tableNumber) {
+      const ok = confirm(`Table ${tableNumber} の注文履歴を削除しますか？`);
+      if (!ok) return;
+
+      const { error } = await supabaseClient
+        .from("orders")
+        .delete()
+        .eq("from_table", tableNumber);
+
+      if (error) {
+        console.error(error);
+        alert("履歴削除に失敗しました");
+        return;
+      }
+
+      showNotice(`Table ${tableNumber} の履歴を削除しました`);
+      await fetchOrders();
+    }
+
     function render() {
       renderSummary();
       renderOrders();
       renderHistory();
     }
 
-    function formatDate(value) {
+    function formatTime(value) {
       try {
-        return new Date(value).toLocaleString("ja-JP");
+        const d = new Date(value);
+        return d.toLocaleTimeString("ja-JP", { hour: "2-digit", minute: "2-digit" });
       } catch {
         return value;
       }
