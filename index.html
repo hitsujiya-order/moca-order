@@ -1347,18 +1347,23 @@
 
       const keyword = (document.getElementById("searchInput")?.value || "").trim().toLowerCase();
 
-      const filtered = items.filter(item => {
+      const keyword = normalizeSearchText(document.getElementById("searchInput")?.value || "");
+
+const filtered = items.filter(item => {
   if (!keyword) {
     return item.category === currentCategory;
   }
 
+  const nameText = normalizeSearchText(item.name);
+  const descText = normalizeSearchText(item.desc || "");
+  const categoryText = normalizeSearchText(item.category);
+
   return (
-    item.name.toLowerCase().includes(keyword) ||
-    (item.desc || "").toLowerCase().includes(keyword) ||
-    item.category.toLowerCase().includes(keyword)
+    nameText.includes(keyword) ||
+    descText.includes(keyword) ||
+    categoryText.includes(keyword)
   );
 });
-
       let html = `<div class="menu-grid">`;
       filtered.forEach(item => {
         const idx = items.indexOf(item);
