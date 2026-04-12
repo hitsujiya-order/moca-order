@@ -1345,8 +1345,6 @@
         return;
       }
 
-      const keyword = (document.getElementById("searchInput")?.value || "").trim().toLowerCase();
-
       const keyword = normalizeSearchText(document.getElementById("searchInput")?.value || "");
 
 const filtered = items.filter(item => {
