@@ -1297,6 +1297,16 @@
       if (isSoldOut(item)) html += `<span class="badge badge-soldout">SOLD OUT</span>`;
       return html;
     }
+    function normalizeSearchText(text) {
+  return String(text || "")
+    .toLowerCase()
+    .normalize("NFKC")
+    .replace(/[\u30a1-\u30f6]/g, function(ch) {
+      return String.fromCharCode(ch.charCodeAt(0) - 0x60);
+    })
+    .replace(/ー/g, "")
+    .replace(/\s+/g, "");
+}
 
     function renderMenu() {
       const menuArea = document.getElementById("menuArea");
