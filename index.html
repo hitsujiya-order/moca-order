@@ -38,7 +38,7 @@
     }
 
     .site-title span {
-      font-size: 28px;
+      font-size: 30px;
       font-weight: 800;
       letter-spacing: 2px;
     }
@@ -63,7 +63,7 @@
       backdrop-filter: blur(10px);
       border-bottom: 1px solid rgba(255,255,255,0.06);
       position: sticky;
-      top: 60px;
+      top: 62px;
       z-index: 99;
     }
 
@@ -89,7 +89,7 @@
       backdrop-filter: blur(10px);
       border-bottom: 1px solid rgba(255,255,255,0.06);
       position: sticky;
-      top: 112px;
+      top: 114px;
       z-index: 98;
     }
 
@@ -171,6 +171,7 @@
       min-height: 32px;
       line-height: 1.35;
       margin-bottom: 8px;
+      white-space: pre-line;
     }
 
     .price {
@@ -285,6 +286,7 @@
       color: #cfcfcf;
       line-height: 1.5;
       margin-top: 0;
+      white-space: pre-line;
     }
 
     .option-group {
@@ -320,6 +322,9 @@
       border-radius: 10px;
       font-size: 18px;
       cursor: pointer;
+      user-select: none;
+      -webkit-user-select: none;
+      touch-action: manipulation;
     }
 
     .qty-number {
@@ -370,6 +375,7 @@
       font-size: 13px;
       margin-top: 4px;
       line-height: 1.5;
+      white-space: pre-line;
     }
 
     .total-box {
@@ -435,6 +441,7 @@
       font-size: 14px;
       font-weight: bold;
       cursor: pointer;
+      text-align: left;
     }
 
     .option-modal-note {
@@ -442,6 +449,7 @@
       font-size: 13px;
       margin-top: 8px;
       line-height: 1.5;
+      white-space: pre-line;
     }
 
     @keyframes fadeUp {
@@ -503,9 +511,25 @@
       </div>
 
       <div class="qty-row">
-        <button onclick="changeQty(-1)">−</button>
+        <button
+          onmousedown="startPress('minus')"
+          onmouseup="stopPress()"
+          onmouseleave="stopPress()"
+          ontouchstart="startPress('minus')"
+          ontouchend="stopPress()"
+          ontouchcancel="stopPress()"
+        >−</button>
+
         <div class="qty-number" id="qtyNumber">1</div>
-        <button onclick="changeQty(1)">＋</button>
+
+        <button
+          onmousedown="startPress('plus')"
+          onmouseup="stopPress()"
+          onmouseleave="stopPress()"
+          ontouchstart="startPress('plus')"
+          ontouchend="stopPress()"
+          ontouchcancel="stopPress()"
+        >＋</button>
       </div>
 
       <div class="modal-actions">
@@ -577,7 +601,8 @@
       "WHISKY & BOURBON",
       "SCOTCH • IRISH WHISKY",
       "MOJITO",
-      "COCKTAILS",
+      "CAMPARI & PEACH & RUM",
+      "JOSSIE & MALIBU & AMARETTO",
       "OTHERS",
       "WINE",
       "NON ALCOHOL",
@@ -622,16 +647,21 @@
         category: "GIN & VODKA & TEQUILA",
         name: "ジン",
         price: 800,
-        desc: "",
+        desc: "カクテルのベース（基酒）として世界中で愛されています",
         optionType: "custom_choice",
-        options: ["ソーダ", "ジンジャエール", "トニック", "ライム"],
+        options: [
+          "ジンリッキー(ソーダ)",
+          "ジンバック(ジンジャエール)",
+          "ジントニック(トニック)",
+          "ジンライム(ライム)"
+        ],
         image: "https://images.unsplash.com/photo-1513558161293-cdaf765ed2fd"
       },
       {
         category: "GIN & VODKA & TEQUILA",
         name: "オン・ザ・ロック",
         price: 800,
-        desc: "",
+        desc: "「味のグラデーション」を楽しめるのが最大の魅力",
         optionType: "custom_choice",
         options: ["タンカレー", "ボンベイ"],
         image: "https://images.unsplash.com/photo-1587223962930-cb7f31384c19"
@@ -640,23 +670,28 @@
         category: "GIN & VODKA & TEQUILA",
         name: "ウォッカ",
         price: 800,
-        desc: "",
+        desc: "最大の特徴は「無色・無味・無臭」に近い、極めてピュアなキャラクターにあります",
         optionType: "custom_choice",
-        options: ["グレープフルーツ", "グレープフルーツ+ソルト", "ジンジャエール", "オレンジ"],
+        options: [
+          "ブルドック(+グレープフルーツ)",
+          "ソルティードック(+グレープフルーツ+ソルト)",
+          "モスコミュール(+ジンジャエール)",
+          "スクリュードライバー(+オレンジ)"
+        ],
         image: "https://images.unsplash.com/photo-1544145945-f90425340c7e"
       },
       {
         category: "GIN & VODKA & TEQUILA",
         name: "テキーラショット・ロック",
         price: 530,
-        desc: "",
+        desc: "バーやパーティーでよく見かける一気に飲み干すスタイル",
         image: "https://images.unsplash.com/photo-1582819509237-df99fd887a2b"
       },
       {
         category: "GIN & VODKA & TEQUILA",
         name: "テキーラサンライズ",
         price: 800,
-        desc: "",
+        desc: "朝焼け（日の出）のようなグラデーションが美しいロングカクテル",
         image: "https://images.unsplash.com/photo-1582819509237-df99fd887a2b"
       },
 
@@ -669,9 +704,16 @@
       },
       {
         category: "WHISKY & BOURBON",
-        name: "ビアハイボール / 梅酒ハイボール",
+        name: "ビアハイボール",
         price: 800,
-        desc: "ビールや梅酒をソーダで割った、爽やかで飲みやすいスタイルのハイボール",
+        desc: "ビールとウイスキー（または焼酎）を掛け合わせた飲み物",
+        image: "https://images.unsplash.com/photo-1470337458703-46ad1756a187"
+      },
+      {
+        category: "WHISKY & BOURBON",
+        name: "梅酒ハイボール",
+        price: 800,
+        desc: "梅酒をソーダ（炭酸水）で割ったもの",
         image: "https://images.unsplash.com/photo-1470337458703-46ad1756a187"
       },
       {
@@ -781,7 +823,7 @@
         category: "MOJITO",
         name: "ルジェカシスモヒート",
         price: 950,
-        desc: "女性に人気のカシスモヒート。カシス好きには絶対オススメ",
+        desc: "女性に人気のカシスモヒートカシス好きには絶対オススメ",
         image: "https://images.unsplash.com/photo-1551751299-1b51cab2694c"
       },
       {
@@ -802,7 +844,7 @@
         category: "MOJITO",
         name: "ミドリモヒート",
         price: 950,
-        desc: "メロンの香りがとても豊か。他にはないグリーンモヒート",
+        desc: "メロンの香りがとても豊か他にはないグリーンモヒート",
         image: "https://images.unsplash.com/photo-1551751299-1b51cab2694c"
       },
       {
@@ -821,66 +863,79 @@
       },
 
       {
-        category: "COCKTAILS",
-        name: "カンパリ オレンジ",
+        category: "CAMPARI & PEACH & RUM",
+        name: "カンパリ",
         price: 700,
-        desc: "甘苦い定番",
+        desc: "イタリア生まれの鮮やかな赤色が特徴のリキュール",
+        optionType: "custom_choice",
+        options: [
+          "カンパリオレンジ(+オレンジ)",
+          "カンパリソーダ(+ソーダ)",
+          "カンパリグレープ(+グレープフルーツ)",
+          "スプモーニ(+トニック+グレープフルーツ)"
+        ],
         image: "https://images.unsplash.com/photo-1514362545857-3bc16c4c7d1b"
       },
       {
-        category: "COCKTAILS",
-        name: "カンパリ ソーダ",
+        category: "CAMPARI & PEACH & RUM",
+        name: "ピーチ",
         price: 700,
-        desc: "すっきり飲みやすい",
-        image: "https://images.unsplash.com/photo-1514362545857-3bc16c4c7d1b"
-      },
-      {
-        category: "COCKTAILS",
-        name: "スプモーニ",
-        price: 800,
-        desc: "カンパリ系の人気カクテル",
-        image: "https://images.unsplash.com/photo-1514362545857-3bc16c4c7d1b"
-      },
-      {
-        category: "COCKTAILS",
-        name: "カシス オレンジ",
-        price: 700,
-        desc: "定番人気",
-        image: "https://images.unsplash.com/photo-1497534446932-c925b458314e"
-      },
-      {
-        category: "COCKTAILS",
-        name: "カシス グレープ",
-        price: 700,
-        desc: "フルーティー",
-        image: "https://images.unsplash.com/photo-1497534446932-c925b458314e"
-      },
-      {
-        category: "COCKTAILS",
-        name: "カシス ソーダ",
-        price: 700,
-        desc: "軽やかに飲める",
-        image: "https://images.unsplash.com/photo-1497534446932-c925b458314e"
-      },
-      {
-        category: "COCKTAILS",
-        name: "レゲエパンチ",
-        price: 700,
-        desc: "ピーチ系の人気カクテル",
+        desc: "女性にも人気の定番フレーバー",
+        optionType: "custom_choice",
+        options: [
+          "レゲエパンチ(+ウーロン茶)",
+          "ファージーネーブル(+オレンジ)"
+        ],
         image: "https://images.unsplash.com/photo-1513558161293-cdaf765ed2fd"
       },
       {
-        category: "COCKTAILS",
-        name: "ファジーネーブル",
+        category: "CAMPARI & PEACH & RUM",
+        name: "ラム",
         price: 700,
-        desc: "甘くて飲みやすい",
+        desc: "どこかキャラメルのような独特の甘い風味を感じるのが特徴",
+        optionType: "custom_choice",
+        options: [
+          "ラムコーク(+コーラ)",
+          "ラムバック"
+        ],
+        image: "https://images.unsplash.com/photo-1513558161293-cdaf765ed2fd"
+      },
+
+      {
+        category: "JOSSIE & MALIBU & AMARETTO",
+        name: "ジョシー",
+        price: 700,
+        desc: "紅茶のリキュール。ジョジー落ち着いた味で女性に人気",
+        optionType: "custom_choice",
+        options: [
+          "ジョシーオレンジ(+オレンジ)",
+          "ジョシージンジャー(+ジンジャー)"
+        ],
         image: "https://images.unsplash.com/photo-1513558161293-cdaf765ed2fd"
       },
       {
-        category: "COCKTAILS",
-        name: "ラムコーク",
+        category: "JOSSIE & MALIBU & AMARETTO",
+        name: "マリブ",
         price: 700,
-        desc: "ラムの定番",
+        desc: "ラムをベースにしたココナッツ・フレーバーのリキュール",
+        optionType: "custom_choice",
+        options: [
+          "マリブコーラ(+コーラ)",
+          "マリブミルク(+ミルク)"
+        ],
+        image: "https://images.unsplash.com/photo-1513558161293-cdaf765ed2fd"
+      },
+      {
+        category: "JOSSIE & MALIBU & AMARETTO",
+        name: "アマレット",
+        price: 700,
+        desc: "イタリアを代表するリキュールの一つで、その「杏仁豆腐」のような甘い香りが最大の特徴",
+        optionType: "custom_choice",
+        options: [
+          "アマレットコーラ(+コーラ)",
+          "アマレットミルク(+ミルク)",
+          "アマレットジンジャー(ジンジャエール)"
+        ],
         image: "https://images.unsplash.com/photo-1513558161293-cdaf765ed2fd"
       },
 
@@ -888,7 +943,7 @@
         category: "OTHERS",
         name: "梅酒ビア",
         price: 800,
-        desc: "梅酒+ビール / ビールの苦味を感じない驚きの味",
+        desc: "梅酒+ビール/ビールの苦味を感じない驚きの味",
         image: "https://images.unsplash.com/photo-1551024709-8f23befc6cf7"
       },
       {
@@ -909,14 +964,14 @@
         category: "OTHERS",
         name: "パトロンコーヒー",
         price: 950,
-        desc: "パトロンコーヒー＋コーヒー＋生クリーム＋シナモン / テキーラ＋コーヒーのリキュール！大人な味わい",
+        desc: "パトロンコーヒー＋コーヒー＋生クリーム＋シナモン/テキーラ＋コーヒーのリキュール！大人な味わい",
         image: "https://images.unsplash.com/photo-1513558161293-cdaf765ed2fd"
       },
       {
         category: "OTHERS",
         name: "南国ラム",
         price: 900,
-        desc: "ラム+オレンジ+パイナップル / ラムの甘さとフルーツジュースで南国気分",
+        desc: "ラム+オレンジ+パイナッル / ラムの甘さとフルーツジュースで南国気分",
         image: "https://images.unsplash.com/photo-1513558161293-cdaf765ed2fd"
       },
       {
@@ -944,14 +999,14 @@
         category: "OTHERS",
         name: "マスカットトニック",
         price: 800,
-        desc: "ミスティア＋トニック＋ライム / みずみずしさとさわやかな酸味、華やかな香りが最高の逸品",
+        desc: "ミスティア＋トニック＋ライム /\nみずみずしさとさわやかな酸味華やかな香りが最高の逸品",
         image: "https://images.unsplash.com/photo-1513558161293-cdaf765ed2fd"
       },
       {
         category: "OTHERS",
         name: "チャイナブルー",
         price: 800,
-        desc: "ライチ＋トニック+グレープフルーツ / 甘さを抑えて飲みやすく自然なライチ果実の味わいが特徴のバライン",
+        desc: "ライチ＋トニック+グレープフルーツ/ 甘さを抑えて飲みやすく自然なライチ果実の味わいが特徴のバライン",
         image: "https://images.unsplash.com/photo-1575023782549-62ca0d244b39"
       },
       {
@@ -1126,9 +1181,25 @@
     let soldOutMap = {};
     let currentTwoStepItem = null;
     let currentTwoStepFirstChoice = "";
+    let pressTimer = null;
 
     function displayPrice(item) {
       return item.priceLabel || `¥${item.price.toLocaleString()}`;
+    }
+
+    function startPress(type) {
+      stopPress();
+      pressTimer = setInterval(() => {
+        if (type === "plus") changeQty(1);
+        else changeQty(-1);
+      }, 120);
+    }
+
+    function stopPress() {
+      if (pressTimer) {
+        clearInterval(pressTimer);
+        pressTimer = null;
+      }
     }
 
     async function fetchMenuFlags() {
@@ -1268,10 +1339,6 @@
       menuArea.innerHTML = html;
     }
 
-    function shouldShowMixOptions(item) {
-      return false;
-    }
-
     function openItemModal(index) {
       selectedItem = items[index];
 
@@ -1344,15 +1411,13 @@
             return;
           }
 
-          if ((item.step1Options || []).length > 0 && (item.step2Options || []).length > 0) {
-            currentTwoStepFirstChoice = option;
-            openOptionSelectModal(
-              item,
-              item.step2Options,
-              item.step2Label || "内容を選択してください"
-            );
-            return;
-          }
+          currentTwoStepFirstChoice = option;
+          openOptionSelectModal(
+            item,
+            item.step2Options,
+            item.step2Label || "内容を選択してください"
+          );
+          return;
         } else {
           const first = currentTwoStepFirstChoice;
           currentTwoStepFirstChoice = "";
@@ -1401,6 +1466,7 @@
     }
 
     function closeItemModal() {
+      stopPress();
       document.getElementById("itemModalBg").style.display = "none";
     }
 
