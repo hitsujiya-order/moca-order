@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>moca order</title>
+  <title>Dining Bar moca</title>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <style>
     * { box-sizing: border-box; }
@@ -29,12 +29,18 @@
       text-align: center;
     }
 
-    header h1 {
+    .site-title {
       margin: 0;
-      font-size: 21px;
-      letter-spacing: 2px;
+      font-size: 18px;
+      letter-spacing: 1px;
       color: #f5f5f5;
-      text-transform: lowercase;
+      font-weight: 500;
+    }
+
+    .site-title span {
+      font-size: 28px;
+      font-weight: 800;
+      letter-spacing: 2px;
     }
 
     .table-banner {
@@ -57,7 +63,7 @@
       backdrop-filter: blur(10px);
       border-bottom: 1px solid rgba(255,255,255,0.06);
       position: sticky;
-      top: 57px;
+      top: 60px;
       z-index: 99;
     }
 
@@ -83,7 +89,7 @@
       backdrop-filter: blur(10px);
       border-bottom: 1px solid rgba(255,255,255,0.06);
       position: sticky;
-      top: 109px;
+      top: 112px;
       z-index: 98;
     }
 
@@ -136,7 +142,6 @@
       width: 100%;
       aspect-ratio: 1 / 1;
       background: #fff;
-      background: #f5f5f5;
       border-radius: 12px;
       display: flex;
       align-items: center;
@@ -145,21 +150,19 @@
     }
 
     .img-wrap img {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
+      width: 85%;
+      height: 85%;
+      object-fit: contain;
       display: block;
     }
 
     .card h3 {
       font-size: 13px;
       margin: 12px 0 6px;
-      line-height: 1.2;
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
-      letter-spacing: 0.1px;
+      line-height: 1.25;
       color: #fff;
+      letter-spacing: 0.1px;
+      min-height: 34px;
     }
 
     .desc {
@@ -267,7 +270,6 @@
       border-radius: 20px;
       box-shadow: 0 18px 42px rgba(0,0,0,0.28);
       backdrop-filter: blur(12px);
-      transform: translateY(-6px);
     }
 
     #historyModalBg .modal {
@@ -416,6 +418,32 @@
       box-shadow: 0 10px 24px rgba(0,0,0,0.24);
     }
 
+    .option-btn-list {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      margin-top: 16px;
+    }
+
+    .option-btn-list button {
+      width: 100%;
+      padding: 12px;
+      border: none;
+      border-radius: 12px;
+      background: #fff;
+      color: #000;
+      font-size: 14px;
+      font-weight: bold;
+      cursor: pointer;
+    }
+
+    .option-modal-note {
+      color: #cfcfcf;
+      font-size: 13px;
+      margin-top: 8px;
+      line-height: 1.5;
+    }
+
     @keyframes fadeUp {
       from {
         opacity: 0;
@@ -430,7 +458,7 @@
 </head>
 <body>
   <header>
-    <h1>moca order</h1>
+    <h1 class="site-title">Dining Bar <span>moca</span></h1>
     <div class="table-banner" id="tableBanner">Table 1</div>
   </header>
 
@@ -487,6 +515,17 @@
     </div>
   </div>
 
+  <div class="modal-bg" id="optionSelectModalBg">
+    <div class="modal">
+      <h2 id="optionSelectTitle"></h2>
+      <p class="option-modal-note" id="optionSelectDesc"></p>
+      <div class="option-btn-list" id="optionSelectButtons"></div>
+      <div class="modal-actions">
+        <button class="btn-sub" onclick="closeOptionSelectModal()">閉じる</button>
+      </div>
+    </div>
+  </div>
+
   <div class="modal-bg" id="cartModalBg">
     <div class="modal">
       <h2>カート</h2>
@@ -534,12 +573,15 @@
 
     const categories = [
       "BEER",
-      "GIN & VODKA",
+      "GIN & VODKA & TEQUILA",
       "WHISKY & BOURBON",
+      "SCOTCH • IRISH WHISKY",
       "MOJITO",
       "COCKTAILS",
-      "OTHERS & WINE",
-      "NON ALCOHOL & SOFT DRINK",
+      "OTHERS",
+      "WINE",
+      "NON ALCOHOL",
+      "SOFT DRINK",
       "STAFF SUPPORT",
       "FOOD"
     ];
@@ -551,14 +593,14 @@
         price: 800,
         desc: "柔らかな甘さと穏やかな苦味。素材の優しい味で飲みやすい。",
         recommend: true,
-        image: "IMG_2582.jpeg"
+        image: "/IMG_2582.jpeg"
       },
       {
         category: "BEER",
         name: "ハイネケン",
         price: 800,
         desc: "ホップがフルーティーでさっぱりとした味わい。",
-        image: "IMG_2613.jpeg"
+        image: "https://i.imgur.com/SP4Yxqu.jpg"
       },
       {
         category: "BEER",
@@ -566,169 +608,218 @@
         price: 800,
         desc: "すっきり爽快なリゾートスタイルのビール。",
         popular: true,
-        image: "IMG_2615.jpeg"
+        image: "https://i.imgur.com/r3Z7cp5.jpg"
       },
       {
         category: "BEER",
         name: "ギネス",
         price: 800,
         desc: "濃い琥珀色と苦味。ホップの強い香りとクリーミーな泡が特徴。",
-        image: "IMG_2616.jpeg"
+        image: "https://i.imgur.com/994tT2x.jpg"
       },
 
       {
-        category: "GIN & VODKA",
-        name: "ジンベース",
+        category: "GIN & VODKA & TEQUILA",
+        name: "ジン",
         price: 800,
-        desc: "リッキー、バック、トニック、ライム",
+        desc: "",
+        optionType: "custom_choice",
+        options: ["ソーダ", "ジンジャエール", "トニック", "ライム"],
         image: "https://images.unsplash.com/photo-1513558161293-cdaf765ed2fd"
       },
       {
-        category: "GIN & VODKA",
-        name: "タンカレー / ボンベイ",
+        category: "GIN & VODKA & TEQUILA",
+        name: "オン・ザ・ロック",
         price: 800,
-        desc: "オン・ザ・ロック",
+        desc: "",
+        optionType: "custom_choice",
+        options: ["タンカレー", "ボンベイ"],
         image: "https://images.unsplash.com/photo-1587223962930-cb7f31384c19"
       },
       {
-        category: "GIN & VODKA",
-        name: "ウォッカベース",
+        category: "GIN & VODKA & TEQUILA",
+        name: "ウォッカ",
         price: 800,
-        desc: "ブルドック、ソルティドッグ、モスコミュール、スクリュードライバー",
+        desc: "",
+        optionType: "custom_choice",
+        options: ["グレープフルーツ", "グレープフルーツ+ソルト", "ジンジャエール", "オレンジ"],
         image: "https://images.unsplash.com/photo-1544145945-f90425340c7e"
+      },
+      {
+        category: "GIN & VODKA & TEQUILA",
+        name: "テキーラショット・ロック",
+        price: 530,
+        desc: "",
+        image: "https://images.unsplash.com/photo-1582819509237-df99fd887a2b"
+      },
+      {
+        category: "GIN & VODKA & TEQUILA",
+        name: "テキーラサンライズ",
+        price: 800,
+        desc: "",
+        image: "https://images.unsplash.com/photo-1582819509237-df99fd887a2b"
       },
 
       {
         category: "WHISKY & BOURBON",
         name: "ハイボール",
         price: 700,
-        desc: "定番のハイボール",
+        desc: "ウイスキーを炭酸水で割った、シンプルで爽快なアルコール飲料",
         image: "https://images.unsplash.com/photo-1514362545857-3bc16c4c7d1b"
       },
       {
         category: "WHISKY & BOURBON",
         name: "ビアハイボール / 梅酒ハイボール",
         price: 800,
-        desc: "各￥800",
+        desc: "ビールや梅酒をソーダで割った、爽やかで飲みやすいスタイルのハイボール",
         image: "https://images.unsplash.com/photo-1470337458703-46ad1756a187"
       },
       {
         category: "WHISKY & BOURBON",
-        name: "バーボン",
+        name: "BOURBON",
         price: 700,
-        desc: "アーリータイムス、ジャックダニエル、セブンクラウン等",
+        desc: "選べるプレミアム・アメリカンウイスキー",
+        optionType: "two_step",
+        step1Label: "銘柄を選択",
+        step1Options: ["Early Times", "Jack Daniel's", "Seagram's Seven Crown"],
+        step2Label: "割り方を選択",
+        step2Options: ["ソーダ割り", "水割り", "ロック", "ストレート"],
         image: "https://images.unsplash.com/photo-1527281400683-1aae777175f8"
       },
       {
         category: "WHISKY & BOURBON",
-        name: "ジェームソン / バランタイン / グレングラント",
-        price: 700,
-        desc: "スコッチ・アイリッシュ",
+        name: "I.W. HARPER",
+        price: 800,
+        desc: "スタイリッシュなボトルが印象的な、都会的で洗練されたバーボンウイスキー",
+        optionType: "two_step",
+        step1Label: "割り方を選択",
+        step1Options: ["ソーダ割り", "水割り", "ロック", "ストレート"],
+        image: "https://images.unsplash.com/photo-1527281400683-1aae777175f8"
+      },
+
+      {
+        category: "SCOTCH • IRISH WHISKY",
+        name: "JAMESON",
+        price: 800,
+        desc: "スムーズでマイルド。3回蒸留による滑らかさが特徴のアイリッシュ",
+        optionType: "two_step",
+        step1Label: "割り方を選択",
+        step1Options: ["ソーダ割り", "水割り", "ロック", "ストレート"],
         image: "https://images.unsplash.com/photo-1582819509237-df99fd887a2b"
       },
       {
-        category: "WHISKY & BOURBON",
-        name: "タリスカー 10年",
+        category: "SCOTCH • IRISH WHISKY",
+        name: "Ballantine's FINEST",
+        price: 700,
+        desc: "40種以上の原酒が織りなす、バランスの取れた華やかな味わい",
+        optionType: "two_step",
+        step1Label: "割り方を選択",
+        step1Options: ["ソーダ割り", "水割り", "ロック", "ストレート"],
+        image: "https://images.unsplash.com/photo-1582819509237-df99fd887a2b"
+      },
+      {
+        category: "SCOTCH • IRISH WHISKY",
+        name: "GLEN GRANT ARBORALIS",
+        price: 800,
+        desc: "明るくフルーティー。ヘーゼルナッツや花の香りが漂う軽やかな1杯",
+        optionType: "two_step",
+        step1Label: "割り方を選択",
+        step1Options: ["ソーダ割り", "水割り", "ロック", "ストレート"],
+        image: "https://images.unsplash.com/photo-1582819509237-df99fd887a2b"
+      },
+      {
+        category: "SCOTCH • IRISH WHISKY",
+        name: "TALISKER 10years",
         price: 1200,
-        desc: "香り高い本格派",
-        limited: true,
+        desc: "「潮風の香り」と黒胡椒のようなスパイシーさ。ハイボールが絶品",
+        optionType: "two_step",
+        step1Label: "割り方を選択",
+        step1Options: ["ソーダ割り", "水割り", "ロック", "ストレート"],
         image: "https://images.unsplash.com/photo-1613206485381-b028e578e5b9"
       },
       {
-        category: "WHISKY & BOURBON",
-        name: "ラフロイグ 10年",
+        category: "SCOTCH • IRISH WHISKY",
+        name: "LAPHROAIG 10years",
         price: 1400,
-        desc: "個性の強いスモーキー感",
-        soldOut: true,
+        desc: "強烈な燻製香と潮の香り。「好きになるか、嫌いになるか」の個性派",
+        optionType: "two_step",
+        step1Label: "割り方を選択",
+        step1Options: ["ソーダ割り", "水割り", "ロック", "ストレート"],
         image: "https://images.unsplash.com/photo-1569529465841-dfecdab7503b"
       },
 
       {
         category: "MOJITO",
-        name: "スタンダード モヒート",
+        name: "マリブモヒート",
         price: 950,
-        desc: "定番の爽やかなモヒート",
+        desc: "ココナッツの香り豊かな南国系モヒート",
         image: "https://images.unsplash.com/photo-1551751299-1b51cab2694c"
       },
       {
         category: "MOJITO",
-        name: "マリブ モヒート",
+        name: "イタリアンモヒート",
         price: 950,
-        desc: "トロピカルな香り",
+        desc: "ハーブリキュール、カンパリを使ったほろ苦い大人のモヒート",
         image: "https://images.unsplash.com/photo-1551751299-1b51cab2694c"
       },
       {
         category: "MOJITO",
-        name: "イタリアン モヒート",
+        name: "モヒート",
         price: 950,
-        desc: "すっきりした飲み口",
+        desc: "ラムベースで作った定番のモヒート",
         image: "https://images.unsplash.com/photo-1551751299-1b51cab2694c"
       },
       {
         category: "MOJITO",
-        name: "パッシモ モヒート",
-        price: 950,
-        desc: "フルーティー",
-        image: "https://images.unsplash.com/photo-1551751299-1b51cab2694c"
-      },
-      {
-        category: "MOJITO",
-        name: "マンゴヤン モヒート",
-        price: 950,
-        desc: "マンゴーの甘み",
-        image: "https://images.unsplash.com/photo-1551751299-1b51cab2694c"
-      },
-      {
-        category: "MOJITO",
-        name: "ミドリ モヒート",
-        price: 950,
-        desc: "メロンリキュール使用",
-        image: "https://images.unsplash.com/photo-1551751299-1b51cab2694c"
-      },
-      {
-        category: "MOJITO",
-        name: "ルジェカシス モヒート",
-        price: 950,
-        desc: "カシス香る一杯",
-        image: "https://images.unsplash.com/photo-1551751299-1b51cab2694c"
-      },
-      {
-        category: "MOJITO",
-        name: "ティフィン モヒート",
-        price: 950,
-        desc: "紅茶系の香り",
-        image: "https://images.unsplash.com/photo-1551751299-1b51cab2694c"
-      },
-      {
-        category: "MOJITO",
-        name: "パイナップル モヒート",
-        price: 950,
-        desc: "南国感たっぷり",
-        image: "https://images.unsplash.com/photo-1551751299-1b51cab2694c"
-      },
-      {
-        category: "MOJITO",
-        name: "シャルトリューズ モヒート",
+        name: "シャトルリューズモヒート",
         price: 1000,
-        desc: "爽やかで贅沢な一杯",
+        desc: "130種類のハーブが香る神移のモヒート",
         limited: true,
         image: "https://images.unsplash.com/photo-1570598912132-0ba1dc952b7d"
       },
+      {
+        category: "MOJITO",
+        name: "ルジェカシスモヒート",
+        price: 950,
+        desc: "女性に人気のカシスモヒート。カシス好きには絶対オススメ",
+        image: "https://images.unsplash.com/photo-1551751299-1b51cab2694c"
+      },
+      {
+        category: "MOJITO",
+        name: "パッシモヒート",
+        price: 950,
+        desc: "夏に最適な柑橘系のさっぱりモヒート",
+        image: "https://images.unsplash.com/photo-1551751299-1b51cab2694c"
+      },
+      {
+        category: "MOJITO",
+        name: "マンゴヤンモヒート",
+        price: 950,
+        desc: "芳醇な味わいのマンゴーリキュールを使ったイエローモヒート",
+        image: "https://images.unsplash.com/photo-1551751299-1b51cab2694c"
+      },
+      {
+        category: "MOJITO",
+        name: "ミドリモヒート",
+        price: 950,
+        desc: "メロンの香りがとても豊か。他にはないグリーンモヒート",
+        image: "https://images.unsplash.com/photo-1551751299-1b51cab2694c"
+      },
+      {
+        category: "MOJITO",
+        name: "ティフィンモヒート",
+        price: 950,
+        desc: "紅茶のリキュールを使ったおしゃれなティーフレーバー",
+        image: "https://images.unsplash.com/photo-1551751299-1b51cab2694c"
+      },
+      {
+        category: "MOJITO",
+        name: "パイナップルモヒート",
+        price: 950,
+        desc: "すっきり、さっぱり、爽快な夏を感じるモヒート",
+        image: "https://images.unsplash.com/photo-1551751299-1b51cab2694c"
+      },
 
-      {
-        category: "COCKTAILS",
-        name: "テキーラ ショット・ロック",
-        price: 530,
-        desc: "ショットまたはロック",
-        image: "https://images.unsplash.com/photo-1582819509237-df99fd887a2b"
-      },
-      {
-        category: "COCKTAILS",
-        name: "テキーラ サンライズ",
-        price: 800,
-        desc: "フルーティーな定番",
-        image: "https://images.unsplash.com/photo-1582819509237-df99fd887a2b"
-      },
       {
         category: "COCKTAILS",
         name: "カンパリ オレンジ",
@@ -792,149 +883,213 @@
         desc: "ラムの定番",
         image: "https://images.unsplash.com/photo-1513558161293-cdaf765ed2fd"
       },
-      {
-        category: "COCKTAILS",
-        name: "マリブミルク",
-        price: 700,
-        desc: "やさしい甘さ",
-        image: "https://images.unsplash.com/photo-1513558161293-cdaf765ed2fd"
-      },
-      {
-        category: "COCKTAILS",
-        name: "チャイナブルー",
-        price: 800,
-        desc: "華やかな香り",
-        image: "https://images.unsplash.com/photo-1575023782549-62ca0d244b39"
-      },
-      {
-        category: "COCKTAILS",
-        name: "スノーボール",
-        price: 800,
-        desc: "なめらかな口当たり",
-        image: "https://images.unsplash.com/photo-1575023782549-62ca0d244b39"
-      },
-      {
-        category: "COCKTAILS",
-        name: "カルーアミルク",
-        price: 800,
-        desc: "コーヒー風味",
-        image: "https://images.unsplash.com/photo-1575023782549-62ca0d244b39"
-      },
 
       {
-        category: "OTHERS & WINE",
+        category: "OTHERS",
         name: "梅酒ビア",
         price: 800,
-        desc: "梅酒ベース",
+        desc: "梅酒+ビール / ビールの苦味を感じない驚きの味",
         image: "https://images.unsplash.com/photo-1551024709-8f23befc6cf7"
       },
       {
-        category: "OTHERS & WINE",
+        category: "OTHERS",
+        name: "コアントローC",
+        price: 800,
+        desc: "ホワイトキュラソー＋オロナミンC / 元気モリモリカクテル",
+        image: "https://images.unsplash.com/photo-1513558161293-cdaf765ed2fd"
+      },
+      {
+        category: "OTHERS",
         name: "梅エール",
         price: 800,
-        desc: "梅酒ベース",
+        desc: "梅酒+赤ワイン+ジンジャエール / 体にポッと優しい味を!!",
         image: "https://images.unsplash.com/photo-1551024709-8f23befc6cf7"
       },
       {
-        category: "OTHERS & WINE",
+        category: "OTHERS",
         name: "パトロンコーヒー",
         price: 950,
-        desc: "パトロンベース",
-        limited: true,
+        desc: "パトロンコーヒー＋コーヒー＋生クリーム＋シナモン / テキーラ＋コーヒーのリキュール！大人な味わい",
         image: "https://images.unsplash.com/photo-1513558161293-cdaf765ed2fd"
       },
       {
-        category: "OTHERS & WINE",
+        category: "OTHERS",
+        name: "南国ラム",
+        price: 900,
+        desc: "ラム+オレンジ+パイナップル / ラムの甘さとフルーツジュースで南国気分",
+        image: "https://images.unsplash.com/photo-1513558161293-cdaf765ed2fd"
+      },
+      {
+        category: "OTHERS",
+        name: "旨いハイボール",
+        price: 800,
+        desc: "ウイスキー＋キリンレモン / 女子に人気のハイボールをもっとおいしく",
+        image: "https://images.unsplash.com/photo-1514362545857-3bc16c4c7d1b"
+      },
+      {
+        category: "OTHERS",
+        name: "レモンサワー",
+        price: 800,
+        desc: "レモン+焼酎+炭酸 / ドリンクの定番。飲んでスッキリ",
+        image: "https://images.unsplash.com/photo-1514362545857-3bc16c4c7d1b"
+      },
+      {
+        category: "OTHERS",
         name: "パトロンミルク",
         price: 950,
-        desc: "パトロンベース",
+        desc: "パトロン+牛乳 / コーヒー牛乳の大人味",
         image: "https://images.unsplash.com/photo-1513558161293-cdaf765ed2fd"
       },
       {
-        category: "OTHERS & WINE",
-        name: "ワイン グラス",
+        category: "OTHERS",
+        name: "マスカットトニック",
+        price: 800,
+        desc: "ミスティア＋トニック＋ライム / みずみずしさとさわやかな酸味、華やかな香りが最高の逸品",
+        image: "https://images.unsplash.com/photo-1513558161293-cdaf765ed2fd"
+      },
+      {
+        category: "OTHERS",
+        name: "チャイナブルー",
+        price: 800,
+        desc: "ライチ＋トニック+グレープフルーツ / 甘さを抑えて飲みやすく自然なライチ果実の味わいが特徴のバライン",
+        image: "https://images.unsplash.com/photo-1575023782549-62ca0d244b39"
+      },
+      {
+        category: "OTHERS",
+        name: "スノーボール",
+        price: 800,
+        desc: "アドヴォカート+ジンジャエール",
+        image: "https://images.unsplash.com/photo-1575023782549-62ca0d244b39"
+      },
+      {
+        category: "OTHERS",
+        name: "カルーアミルク",
+        price: 800,
+        desc: "カルーア＋ミルク",
+        image: "https://images.unsplash.com/photo-1575023782549-62ca0d244b39"
+      },
+
+      {
+        category: "WINE",
+        name: "Wine glass",
         price: 700,
-        desc: "グラスワイン",
+        priceLabel: "¥700〜",
+        desc: "",
+        optionType: "custom_choice",
+        options: ["赤", "白"],
         image: "https://images.unsplash.com/photo-1510812431401-41d2bd2722f3"
       },
       {
-        category: "OTHERS & WINE",
-        name: "ワイン ボトル",
+        category: "WINE",
+        name: "Wine bottle",
         price: 3500,
-        desc: "ボトルワイン",
+        priceLabel: "¥3500〜",
+        desc: "",
+        optionType: "custom_choice",
+        options: ["赤", "白"],
         image: "https://images.unsplash.com/photo-1510812431401-41d2bd2722f3"
       },
 
       {
-        category: "NON ALCOHOL & SOFT DRINK",
+        category: "NON ALCOHOL",
         name: "サラトガクーラー",
         price: 600,
-        desc: "ノンアルカクテル",
+        desc: "ジンジャエール+ライム",
         image: "https://images.unsplash.com/photo-1542444592-0d7230d24b18"
       },
       {
-        category: "NON ALCOHOL & SOFT DRINK",
+        category: "NON ALCOHOL",
         name: "シャーリーテンプル",
         price: 600,
-        desc: "ノンアルカクテル",
+        desc: "ジンジャエール+グレナデン",
         image: "https://images.unsplash.com/photo-1542444592-0d7230d24b18"
       },
       {
-        category: "NON ALCOHOL & SOFT DRINK",
+        category: "NON ALCOHOL",
+        name: "カシス",
+        price: 600,
+        desc: "",
+        optionType: "custom_choice",
+        options: ["オレンジ", "ソーダ", "グレープフルーツ"],
+        image: "https://images.unsplash.com/photo-1542444592-0d7230d24b18"
+      },
+      {
+        category: "NON ALCOHOL",
         name: "ヴァージンモヒート",
         price: 800,
-        desc: "ノンアルカクテル",
+        desc: "ライム+ソーダ+ミント",
         image: "https://images.unsplash.com/photo-1542444592-0d7230d24b18"
       },
       {
-        category: "NON ALCOHOL & SOFT DRINK",
-        name: "100%ジュース",
+        category: "NON ALCOHOL",
+        name: "バージンブリーズ",
+        price: 700,
+        desc: "クランベリージュースplusグレープフルーツ",
+        image: "https://images.unsplash.com/photo-1542444592-0d7230d24b18"
+      },
+      {
+        category: "NON ALCOHOL",
+        name: "ロイ・ロジャース",
+        price: 700,
+        desc: "コーラ・グレナデン",
+        image: "https://images.unsplash.com/photo-1542444592-0d7230d24b18"
+      },
+      {
+        category: "NON ALCOHOL",
+        name: "チャイナブルー",
+        price: 800,
+        desc: "ライチシロップ+グレープフルーツ+トニック+ブルーキュラソー",
+        image: "https://images.unsplash.com/photo-1542444592-0d7230d24b18"
+      },
+      {
+        category: "NON ALCOHOL",
+        name: "メロンボール",
+        price: 800,
+        desc: "メロンシロップ+パインジュース+ジンジャエール",
+        image: "https://images.unsplash.com/photo-1542444592-0d7230d24b18"
+      },
+      {
+        category: "NON ALCOHOL",
+        name: "ノンアルコールビール(キリン零ICHI)",
+        price: 700,
+        desc: "",
+        image: "https://images.unsplash.com/photo-1563379091339-03246963d29c"
+      },
+
+      {
+        category: "SOFT DRINK",
+        name: "100%Juice",
         price: 600,
-        desc: "ソフトドリンク",
+        desc: "",
+        optionType: "custom_choice",
+        options: ["オレンジ", "グレープフルーツ", "パイナップル", "マンゴー", "トマト"],
         image: "https://images.unsplash.com/photo-1542444592-0d7230d24b18"
       },
       {
-        category: "NON ALCOHOL & SOFT DRINK",
-        name: "お茶",
+        category: "SOFT DRINK",
+        name: "その他",
         price: 600,
-        desc: "ソフトドリンク",
+        desc: "",
+        optionType: "custom_choice",
+        options: ["ウーロン茶", "コーラ", "ジンジャエール"],
         image: "https://images.unsplash.com/photo-1542444592-0d7230d24b18"
       },
       {
-        category: "NON ALCOHOL & SOFT DRINK",
-        name: "コーラ",
-        price: 600,
-        desc: "ソフトドリンク",
+        category: "SOFT DRINK",
+        name: "フロート",
+        price: 700,
+        desc: "",
+        optionType: "custom_choice",
+        options: ["コーラフロート", "コーヒーフロート"],
         image: "https://images.unsplash.com/photo-1542444592-0d7230d24b18"
       },
       {
-        category: "NON ALCOHOL & SOFT DRINK",
+        category: "SOFT DRINK",
         name: "水",
         price: 0,
-        desc: "自分のテーブル専用",
+        desc: "",
         selfOnly: true,
         image: "https://images.unsplash.com/photo-1548839140-29a749e1cf4d"
-      },
-      {
-        category: "NON ALCOHOL & SOFT DRINK",
-        name: "コーラフロート",
-        price: 700,
-        desc: "フロート",
-        image: "https://images.unsplash.com/photo-1542444592-0d7230d24b18"
-      },
-      {
-        category: "NON ALCOHOL & SOFT DRINK",
-        name: "コーヒーフロート",
-        price: 700,
-        desc: "フロート",
-        image: "https://images.unsplash.com/photo-1542444592-0d7230d24b18"
-      },
-      {
-        category: "NON ALCOHOL & SOFT DRINK",
-        name: "ノンアルコールビール",
-        price: 700,
-        desc: "キリン零ICHI",
-        image: "https://images.unsplash.com/photo-1563379091339-03246963d29c"
       },
 
       {
@@ -969,6 +1124,12 @@
     let cart = JSON.parse(localStorage.getItem("mocaCart")) || [];
     let loadingHistory = false;
     let soldOutMap = {};
+    let currentTwoStepItem = null;
+    let currentTwoStepFirstChoice = "";
+
+    function displayPrice(item) {
+      return item.priceLabel || `¥${item.price.toLocaleString()}`;
+    }
 
     async function fetchMenuFlags() {
       const { data, error } = await supabaseClient
@@ -1072,7 +1233,7 @@
               </div>
               <h3 title="${escapeHtml(item.name)}">${escapeHtml(item.name)}</h3>
               <div class="desc">${escapeHtml(item.desc)}</div>
-              <div class="price">¥${item.price.toLocaleString()}</div>
+              <div class="price">${displayPrice(item)}</div>
               <button type="button">選択する</button>
             </div>
           `;
@@ -1098,7 +1259,7 @@
             ` : ``}
             <h3 title="${escapeHtml(item.name)}">${escapeHtml(item.name)}</h3>
             <div class="desc">${escapeHtml(item.desc)}</div>
-            <div class="price">¥${item.price.toLocaleString()}</div>
+            <div class="price">${displayPrice(item)}</div>
             <button type="button" ${soldOut ? 'disabled' : ''}>${soldOut ? '売り切れ' : '選択する'}</button>
           </div>
         `;
@@ -1108,30 +1269,135 @@
     }
 
     function shouldShowMixOptions(item) {
-      return !["BEER", "NON ALCOHOL & SOFT DRINK", "STAFF SUPPORT"].includes(item.category);
+      return false;
     }
 
     function openItemModal(index) {
       selectedItem = items[index];
+
+      if (selectedItem.optionType === "custom_choice" && Array.isArray(selectedItem.options) && selectedItem.options.length > 0) {
+        openOptionSelectModal(selectedItem, selectedItem.options, "内容を選択してください");
+        return;
+      }
+
+      if (selectedItem.optionType === "two_step") {
+        currentTwoStepItem = selectedItem;
+        currentTwoStepFirstChoice = "";
+        openOptionSelectModal(
+          selectedItem,
+          selectedItem.step1Options || [],
+          selectedItem.step1Label || "選択してください"
+        );
+        return;
+      }
+
       quantity = 1;
       document.getElementById("qtyNumber").textContent = quantity;
       document.getElementById("modalTitle").textContent = selectedItem.name;
-      document.getElementById("modalDesc").textContent = selectedItem.desc;
-      document.getElementById("modalPrice").textContent = "¥" + selectedItem.price.toLocaleString();
+      document.getElementById("modalDesc").textContent = selectedItem.desc || "";
+      document.getElementById("modalPrice").textContent = displayPrice(selectedItem);
 
-      document.getElementById("drinkOptions").style.display = shouldShowMixOptions(selectedItem) ? "block" : "none";
+      document.getElementById("drinkOptions").style.display = "none";
       document.getElementById("giftModeWrap").style.display = (selectedItem.support || selectedItem.selfOnly) ? "none" : "block";
       document.getElementById("giftTargetWrap").style.display = "none";
       document.getElementById("messageWrap").style.display = selectedItem.support ? "block" : "none";
-
-      const mixRadio = document.querySelector('input[name="mix"][value="ロック"]');
-      if (mixRadio) mixRadio.checked = true;
 
       const giftSelf = document.querySelector('input[name="giftMode"][value="self"]');
       if (giftSelf) giftSelf.checked = true;
 
       document.getElementById("supportMessage").value = "";
       document.getElementById("itemModalBg").style.display = "flex";
+    }
+
+    function openOptionSelectModal(item, options, guideText) {
+      const title = document.getElementById("optionSelectTitle");
+      const desc = document.getElementById("optionSelectDesc");
+      const buttons = document.getElementById("optionSelectButtons");
+
+      title.textContent = item.name;
+      desc.textContent = guideText || "内容を選択してください";
+      buttons.innerHTML = "";
+
+      options.forEach(option => {
+        const btn = document.createElement("button");
+        btn.textContent = option;
+        btn.onclick = () => {
+          handleOptionSelection(item, option);
+        };
+        buttons.appendChild(btn);
+      });
+
+      document.getElementById("optionSelectModalBg").style.display = "flex";
+    }
+
+    function handleOptionSelection(item, option) {
+      if (item.optionType === "custom_choice") {
+        openConfiguredItemModal(item, [option]);
+        return;
+      }
+
+      if (item.optionType === "two_step") {
+        if (!currentTwoStepFirstChoice) {
+          const hasSecondStep = Array.isArray(item.step2Options) && item.step2Options.length > 0;
+          if (!hasSecondStep) {
+            openConfiguredItemModal(item, [option]);
+            return;
+          }
+
+          if ((item.step1Options || []).length > 0 && (item.step2Options || []).length > 0) {
+            currentTwoStepFirstChoice = option;
+            openOptionSelectModal(
+              item,
+              item.step2Options,
+              item.step2Label || "内容を選択してください"
+            );
+            return;
+          }
+        } else {
+          const first = currentTwoStepFirstChoice;
+          currentTwoStepFirstChoice = "";
+          openConfiguredItemModal(item, [first, option]);
+          return;
+        }
+      }
+    }
+
+    function openConfiguredItemModal(baseItem, choices) {
+      closeOptionSelectModal();
+
+      let label = baseItem.name;
+      if (choices && choices.length > 0) {
+        label += `（${choices.join(" / ")}）`;
+      }
+
+      selectedItem = {
+        ...baseItem,
+        name: label,
+        selectedChoices: choices || []
+      };
+
+      quantity = 1;
+      document.getElementById("qtyNumber").textContent = quantity;
+      document.getElementById("modalTitle").textContent = selectedItem.name;
+      document.getElementById("modalDesc").textContent = baseItem.desc || "";
+      document.getElementById("modalPrice").textContent = displayPrice(selectedItem);
+
+      document.getElementById("drinkOptions").style.display = "none";
+      document.getElementById("giftModeWrap").style.display = (selectedItem.support || selectedItem.selfOnly) ? "none" : "block";
+      document.getElementById("giftTargetWrap").style.display = "none";
+      document.getElementById("messageWrap").style.display = selectedItem.support ? "block" : "none";
+
+      const giftSelf = document.querySelector('input[name="giftMode"][value="self"]');
+      if (giftSelf) giftSelf.checked = true;
+
+      document.getElementById("supportMessage").value = "";
+      document.getElementById("itemModalBg").style.display = "flex";
+    }
+
+    function closeOptionSelectModal() {
+      document.getElementById("optionSelectModalBg").style.display = "none";
+      currentTwoStepItem = null;
+      currentTwoStepFirstChoice = "";
     }
 
     function closeItemModal() {
@@ -1150,10 +1416,6 @@
     }
 
     function addToCart() {
-      const mix = shouldShowMixOptions(selectedItem)
-        ? (document.querySelector('input[name="mix"]:checked')?.value || "")
-        : "";
-
       const supportMessage = selectedItem.support
         ? document.getElementById("supportMessage").value.trim()
         : "";
@@ -1177,8 +1439,9 @@
         name: selectedItem.name,
         category: selectedItem.category,
         price: selectedItem.price,
+        priceLabel: selectedItem.priceLabel || "",
         desc: selectedItem.desc,
-        mix,
+        mix: "",
         quantity,
         subtotal: selectedItem.price * quantity,
         fromTable: tableNumber,
@@ -1208,8 +1471,6 @@
         cart.forEach(item => {
           total += item.subtotal;
           html += `<div class="cart-item"><strong>${escapeHtml(item.name)}</strong>`;
-
-          if (item.mix) html += `<div class="small-text">割り方：${escapeHtml(item.mix)}</div>`;
           html += `<div class="small-text">数量：${item.quantity}</div>`;
 
           if (item.orderType === "gift") {
@@ -1247,7 +1508,6 @@
       cart.forEach(item => {
         total += item.subtotal;
         html += `<div class="confirm-item"><strong>${escapeHtml(item.name)}</strong>`;
-        if (item.mix) html += `<div class="small-text">割り方：${escapeHtml(item.mix)}</div>`;
         html += `<div class="small-text">数量：${item.quantity}</div>`;
 
         if (item.orderType === "gift") {
@@ -1284,7 +1544,7 @@
         target_table: item.orderType === "staff_support" ? null : item.targetTable,
         item_name: item.name,
         item_category: item.category,
-        mix: item.mix || null,
+        mix: null,
         quantity: item.quantity,
         subtotal: item.subtotal,
         order_type: item.orderType,
@@ -1337,7 +1597,6 @@
       data.forEach(item => {
         html += `<div class="history-item"><strong>${escapeHtml(item.item_name)}</strong>`;
         html += `<div class="small-text">${formatDate(item.created_at)}</div>`;
-        if (item.mix) html += `<div class="small-text">割り方：${escapeHtml(item.mix)}</div>`;
         html += `<div class="small-text">数量：${item.quantity}</div>`;
 
         if (item.order_type === "gift") {
