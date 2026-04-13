@@ -4,7 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Dining Bar moca</title>
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <img src="${item.image}" style="object-fit: ${item.fit || 'contain'};" alt="...">
   <style>
     * { box-sizing: border-box; }
 
@@ -1332,7 +1332,7 @@
             <div class="card" onclick="openItemModal(${idx})">
               <div class="badge-wrap">${getBadges(item)}</div>
               <div class="img-wrap">
-                <img src="${item.image}" alt="${escapeHtml(item.name)}">
+                <img src="${item.image}" style="object-fit: ${item.fit || 'contain'};" alt="...">
               </div>
               <h3 title="${escapeHtml(item.name)}">${escapeHtml(item.name)}</h3>
               <div class="desc">${escapeHtml(item.desc)}</div>
@@ -1372,7 +1372,7 @@ const filtered = items.filter(item => {
             <div class="badge-wrap">${getBadges(item)}</div>
             ${item.image ? `
               <div class="img-wrap">
-                <img src="${item.image}" alt="${escapeHtml(item.name)}">
+                <img src="${item.image}" style="object-fit: ${item.fit || 'contain'};" alt="...">
               </div>
             ` : ``}
             <h3 title="${escapeHtml(item.name)}">${escapeHtml(item.name)}</h3>
