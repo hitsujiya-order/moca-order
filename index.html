@@ -1332,7 +1332,7 @@
             <div class="card" onclick="openItemModal(${idx})">
               <div class="badge-wrap">${getBadges(item)}</div>
               <div class="img-wrap">
-                <img src="${item.image}" style="object-fit: ${item.fit || 'contain'};" alt="...">
+                <img  src="${item.image}" alt="${escapeHtml(item.name)}">
               </div>
               <h3 title="${escapeHtml(item.name)}">${escapeHtml(item.name)}</h3>
               <div class="desc">${escapeHtml(item.desc)}</div>
