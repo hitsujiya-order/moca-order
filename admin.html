@@ -87,6 +87,28 @@
       gap: 8px;
       overflow-x: auto;
     }
+    .table-filter-wrap {
+  padding: 10px 12px;
+}
+
+.table-filter-row {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  overflow-x: auto;
+}
+
+.table-reset-btn {
+  border: 1px solid rgba(255,255,255,0.12);
+  background: linear-gradient(135deg, #f59e0b, #d97706);
+  color: #111827;
+  border-radius: 999px;
+  padding: 10px 14px;
+  font-size: 13px;
+  font-weight: bold;
+  cursor: pointer;
+  white-space: nowrap;
+}
 
     .summary {
       display: grid;
@@ -407,7 +429,14 @@
     <button onclick="setFilter('done', this)">提供済み</button>
   </div>
 
-  <div class="table-filter-bar" id="tableFilterBar"></div>
+  <div class="table-filter-wrap">
+  <div class="table-filter-row">
+    <div class="table-filter-bar" id="tableFilterBar"></div>
+    <button class="table-reset-btn" id="tableResetBtn" onclick="resetSelectedTable()" style="display:none;">
+      このテーブルをリセット
+    </button>
+  </div>
+</div>
 
   <div class="summary">
     <div class="summary-card">
@@ -553,6 +582,10 @@
         html += `<button class="${selectedTable === t ? 'active' : ''}" onclick="filterTable('${escapeJs(t)}')">T${escapeHtml(t)} ¥${total.toLocaleString()}</button>`;
       });
       bar.innerHTML = html;
+      const resetBtn = document.getElementById("tableResetBtn");
+if (resetBtn) {
+  resetBtn.style.display = selectedTable === null ? "none" : "inline-block";
+     }
     }
 
     function filterTable(num) {
@@ -888,7 +921,13 @@
       showNotice(`Table ${tableNumber} の履歴を削除しました`);
       await fetchOrders();
     }
-
+    function resetSelectedTable() {
+  if (selectedTable === null) {
+    alert("先にテーブルを選択してください");
+    return;
+  }
+  resetTableOrders(selectedTable);
+}
     function render() {
       renderSummary();
       renderOrders();
