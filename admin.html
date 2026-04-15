@@ -151,6 +151,30 @@
       text-shadow: 0 0 18px rgba(96,165,250,0.18);
     }
 
+    .table-summary-line {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 10px;
+      padding: 8px 10px;
+      border-radius: 12px;
+      background: rgba(255,255,255,0.04);
+      border: 1px solid rgba(255,255,255,0.06);
+    }
+
+    .table-sum-label {
+      font-size: 12px;
+      color: #aeb7c8;
+      font-weight: bold;
+    }
+
+    .table-sum-value {
+      font-size: 16px;
+      font-weight: 800;
+      color: #fff;
+    }
+
     .order-head {
       display: flex;
       justify-content: space-between;
@@ -507,13 +531,20 @@
       { name: "スタッフ応援ドリンク ￥1,000", category: "STAFF SUPPORT" }
     ];
 
+    function getTableTotal(tableNumber) {
+      return allOrders
+        .filter(order => String(order.from_table) === String(tableNumber))
+        .reduce((sum, order) => sum + Number(order.subtotal || 0), 0);
+    }
+
     function renderTableFilters() {
       const allTables = [...new Set(allOrders.map(o => String(o.from_table || "")).filter(Boolean))].sort((a, b) => Number(a) - Number(b));
       const bar = document.getElementById("tableFilterBar");
 
       let html = `<button class="${selectedTable === null ? 'active' : ''}" onclick="filterTable(null)">全テーブル</button>`;
       allTables.forEach(t => {
-        html += `<button class="${selectedTable === t ? 'active' : ''}" onclick="filterTable('${escapeJs(t)}')">T${escapeHtml(t)}</button>`;
+        const total = getTableTotal(t);
+        html += `<button class="${selectedTable === t ? 'active' : ''}" onclick="filterTable('${escapeJs(t)}')">T${escapeHtml(t)} ¥${total.toLocaleString()}</button>`;
       });
       bar.innerHTML = html;
     }
@@ -596,9 +627,16 @@
               ? "スタッフ応援"
               : `Table ${escapeHtml(order.target_table || "-")}`;
 
+        const tableTotal = getTableTotal(order.from_table);
+
         html += `
           <div class="order-card ${isLate(order.created_at) && order.status !== 'done' ? 'late' : ''}">
             <div class="table-big">Table ${escapeHtml(order.from_table || "-")}</div>
+
+            <div class="table-summary-line">
+              <div class="table-sum-label">このテーブルの合計</div>
+              <div class="table-sum-value">¥${tableTotal.toLocaleString()}</div>
+            </div>
 
             <div class="order-head">
               <div>
@@ -659,9 +697,16 @@
               ? "スタッフ応援"
               : `Table ${escapeHtml(order.target_table || "-")}`;
 
+        const tableTotal = getTableTotal(order.from_table);
+
         html += `
           <div class="order-card">
             <div class="table-big">Table ${escapeHtml(order.from_table || "-")}</div>
+
+            <div class="table-summary-line">
+              <div class="table-sum-label">このテーブルの合計</div>
+              <div class="table-sum-value">¥${tableTotal.toLocaleString()}</div>
+            </div>
 
             <div class="order-head">
               <div>
