@@ -905,13 +905,13 @@ if (resetBtn) {
 
     async function resetTableOrders(tableNumber) {
   const tableStr = String(tableNumber);
-  const ok = confirm(`Table ${tableStr} の注文履歴をすべて削除しますか？`);
+  const ok = confirm(`Table ${tableStr} に関係する注文履歴をすべて削除しますか？`);
   if (!ok) return;
 
   const { error } = await supabaseClient
     .from("orders")
     .delete()
-    .eq("from_table", tableStr);
+    .or(`from_table.eq.${tableStr},target_table.eq.${tableStr}`);
 
   if (error) {
     console.error(error);
