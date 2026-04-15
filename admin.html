@@ -904,17 +904,41 @@ if (resetBtn) {
     }
 
     async function resetTableOrders(tableNumber) {
-  const tableStr = String(tableNumber);
-  const ok = confirm(`Table ${tableStr} に関係する注文履歴をすべて削除しますか？`);
+  const tableStr = String(tableNumber).trim();
+  const ok = confirm(`Table ${tableStr} の履歴を完全に削除しますか？`);
   if (!ok) return;
 
-  const { error } = await supabaseClient
+  const { data, error } = await supabaseClient
     .from("orders")
-    .delete()
-    .or(`from_table.eq.${tableStr},target_table.eq.${tableStr}`);
+    .select("id, from_table, target_table");
 
   if (error) {
     console.error(error);
+    alert("注文一覧の取得に失敗しました");
+    return;
+  }
+
+  const targetIds = (data || [])
+    .filter(order => {
+      const fromTable = String(order.from_table ?? "").trim();
+      const targetTable = String(order.target_table ?? "").trim();
+
+      return fromTable === tableStr || targetTable === tableStr;
+    })
+    .map(order => order.id);
+
+  if (targetIds.length === 0) {
+    alert(`Table ${tableStr} に該当する履歴が見つかりませんでした`);
+    return;
+  }
+
+  const { error: deleteError } = await supabaseClient
+    .from("orders")
+    .delete()
+    .in("id", targetIds);
+
+  if (deleteError) {
+    console.error(deleteError);
     alert("テーブル履歴の削除に失敗しました");
     return;
   }
