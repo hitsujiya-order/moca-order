@@ -272,6 +272,11 @@
       color: #fff;
     }
 
+    .btn-reset {
+      background: linear-gradient(135deg, #f59e0b, #d97706);
+      color: #111827;
+    }
+
     .empty {
       background: rgba(255,255,255,0.05);
       border: 1px dashed rgba(255,255,255,0.16);
@@ -538,7 +543,8 @@
     }
 
     function renderTableFilters() {
-      const allTables = [...new Set(allOrders.map(o => String(o.from_table || "")).filter(Boolean))].sort((a, b) => Number(a) - Number(b));
+      const allTables = [...new Set(allOrders.map(o => String(o.from_table || "")).filter(Boolean))]
+        .sort((a, b) => Number(a) - Number(b));
       const bar = document.getElementById("tableFilterBar");
 
       let html = `<button class="${selectedTable === null ? 'active' : ''}" onclick="filterTable(null)">全テーブル</button>`;
@@ -667,6 +673,7 @@
                 ${order.status === "done" ? "未提供に戻す" : "提供済みにする"}
               </button>
               <button class="btn-delete" onclick="deleteOrder('${order.id}')">削除</button>
+              <button class="btn-reset" onclick="resetTableOrders('${escapeJs(order.from_table || "")}')">履歴削除</button>
             </div>
           </div>
         `;
@@ -860,6 +867,25 @@
         return;
       }
 
+      await fetchOrders();
+    }
+
+    async function resetTableOrders(tableNumber) {
+      const ok = confirm(`Table ${tableNumber} の注文履歴をすべて削除しますか？`);
+      if (!ok) return;
+
+      const { error } = await supabaseClient
+        .from("orders")
+        .delete()
+        .eq("from_table", String(tableNumber));
+
+      if (error) {
+        console.error(error);
+        alert("テーブル履歴の削除に失敗しました");
+        return;
+      }
+
+      showNotice(`Table ${tableNumber} の履歴を削除しました`);
       await fetchOrders();
     }
 
