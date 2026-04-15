@@ -1047,13 +1047,6 @@ if (resetBtn) {
             await fetchOrders();
           }
         )
-        .on(
-          "postgres_changes",
-          { event: "*", schema: "public", table: "menu_flags" },
-          async () => {
-            await fetchMenuFlags();
-          }
-        )
         .subscribe((status) => {
           console.log("Realtime status:", status);
         });
@@ -1063,14 +1056,13 @@ if (resetBtn) {
       if (pollingTimer) clearInterval(pollingTimer);
       pollingTimer = setInterval(async () => {
         await fetchOrders();
-        await fetchMenuFlags();
       }, 5000);
     }
 
     fetchOrders(true);
-    fetchMenuFlags();
-    subscribeRealtime();
-    startPollingFallback();
+// fetchMenuFlags();
+subscribeRealtime();
+startPollingFallback();
   </script>
 </body>
 </html>
