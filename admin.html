@@ -904,19 +904,25 @@ if (resetBtn) {
     }
 
     async function resetTableOrders(tableNumber) {
-      const ok = confirm(`Table ${tableNumber} の注文履歴をすべて削除しますか？`);
-      if (!ok) return;
+  const tableNum = Number(tableNumber);
+  const ok = confirm(`Table ${tableNum} の注文履歴をすべて削除しますか？`);
+  if (!ok) return;
 
-      const { error } = await supabaseClient
-        .from("orders")
-        .delete()
-        .eq("from_table", String(tableNumber));
+  const { error } = await supabaseClient
+    .from("orders")
+    .delete()
+    .eq("from_table", tableNum);
 
-      if (error) {
-        console.error(error);
-        alert("テーブル履歴の削除に失敗しました");
-        return;
-      }
+  if (error) {
+    console.error(error);
+    alert("テーブル履歴の削除に失敗しました");
+    return;
+  }
+
+  showNotice(`Table ${tableNum} の履歴を削除しました`);
+  selectedTable = null;
+  await fetchOrders(true);
+}
 
       showNotice(`Table ${tableNumber} の履歴を削除しました`);
       await fetchOrders();
