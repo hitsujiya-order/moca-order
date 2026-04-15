@@ -910,7 +910,7 @@ if (resetBtn) {
 
   const { data, error } = await supabaseClient
     .from("orders")
-    .select("id, from_table, target_table");
+    .select("id, from_table, target_table, subtotal");
 
   if (error) {
     console.error(error);
@@ -918,19 +918,20 @@ if (resetBtn) {
     return;
   }
 
-  const targetIds = (data || [])
-    .filter(order => {
-      const fromTable = String(order.from_table ?? "").trim();
-      const targetTable = String(order.target_table ?? "").trim();
+  const targetRows = (data || []).filter(order => {
+    const fromTable = String(order.from_table ?? "").trim();
+    const targetTable = String(order.target_table ?? "").trim();
+    return fromTable === tableStr || targetTable === tableStr;
+  });
 
-      return fromTable === tableStr || targetTable === tableStr;
-    })
-    .map(order => order.id);
+  alert(`削除対象は ${targetRows.length} 件です`);
 
-  if (targetIds.length === 0) {
-    alert(`Table ${tableStr} に該当する履歴が見つかりませんでした`);
+  if (targetRows.length === 0) {
+    alert(`Table ${tableStr} に一致する注文が見つかりません`);
     return;
   }
+
+  const targetIds = targetRows.map(order => order.id);
 
   const { error: deleteError } = await supabaseClient
     .from("orders")
@@ -939,7 +940,7 @@ if (resetBtn) {
 
   if (deleteError) {
     console.error(deleteError);
-    alert("テーブル履歴の削除に失敗しました");
+    alert(`削除失敗: ${deleteError.message || deleteError.code || "unknown error"}`);
     return;
   }
 
