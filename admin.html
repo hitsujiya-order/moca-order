@@ -918,14 +918,9 @@ if (resetBtn) {
     alert("テーブル履歴の削除に失敗しました");
     return;
   }
-
-  showNotice(`Table ${tableNum} の履歴を削除しました`);
-  selectedTable = null;
-  await fetchOrders(true);
-}
-
       showNotice(`Table ${tableNumber} の履歴を削除しました`);
-      await fetchOrders();
+      selectedTable = null;
+      await fetchOrders(true);
     }
     function resetSelectedTable() {
   if (selectedTable === null) {
