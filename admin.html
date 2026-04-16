@@ -1040,24 +1040,17 @@ if (resetBtn) {
             await fetchOrders();
           }
         )
-        .on(
-          "postgres_changes",
-          { event: "DELETE", schema: "public", table: "orders" },
-          async () => {
-            await fetchOrders();
-          }
-        )
         .subscribe((status) => {
           console.log("Realtime status:", status);
         });
     }
 
     function startPollingFallback() {
-      if (pollingTimer) clearInterval(pollingTimer);
-      pollingTimer = setInterval(async () => {
-        await fetchOrders();
-      }, 5000);
-    }
+  if (pollingTimer) clearInterval(pollingTimer);
+  pollingTimer = setInterval(async () => {
+    await fetchOrders();
+  }, 5000);
+}
 
     fetchOrders(true);
 // fetchMenuFlags();
