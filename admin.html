@@ -672,11 +672,6 @@ if (resetBtn) {
           <div class="order-card ${isLate(order.created_at) && order.status !== 'done' ? 'late' : ''}">
             <div class="table-big">Table ${escapeHtml(order.from_table || "-")}</div>
 
-            <div class="table-summary-line">
-              <div class="table-sum-label">このテーブルの合計</div>
-              <div class="table-sum-value">¥${tableTotal.toLocaleString()}</div>
-            </div>
-
             <div class="order-head">
               <div>
                 <h3>${escapeHtml(order.item_name)}</h3>
@@ -741,11 +736,6 @@ if (resetBtn) {
         html += `
           <div class="order-card">
             <div class="table-big">Table ${escapeHtml(order.from_table || "-")}</div>
-
-            <div class="table-summary-line">
-              <div class="table-sum-label">このテーブルの合計</div>
-              <div class="table-sum-value">¥${tableTotal.toLocaleString()}</div>
-            </div>
 
             <div class="order-head">
               <div>
