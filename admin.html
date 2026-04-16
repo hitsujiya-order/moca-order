@@ -1053,7 +1053,7 @@ if (resetBtn) {
 }
 
     fetchOrders(true);
-// fetchMenuFlags();
+document.getElementById("soldoutArea").innerHTML = `<div class="empty">売り切れ管理は現在オフです</div>`;
 subscribeRealtime();
 startPollingFallback();
   </script>
